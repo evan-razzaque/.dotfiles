@@ -1,4 +1,4 @@
 #!/bin/bash
 
-stow --adopt */
+stow --adopt -v */
 git restore .
