@@ -16,4 +16,9 @@ alias adb-root='adb shell -t "su -c bash"'
 
 PS1='[\u@\h \W]\$ '
 
-fastfetch
+# Stop fastfetch from running in tmux panes
+if [ -f /usr/bin/fastfetch ]; then
+	if [[ -z $TMUX_PANE ]]; then
+		fastfetch
+	fi
+fi
