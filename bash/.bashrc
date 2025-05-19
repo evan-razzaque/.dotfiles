@@ -12,7 +12,7 @@ alias ll='la -lh'
 alias grep='grep --color=auto'
 
 alias vimsu='sudo -E vim'
-alias adb-root='adb shell -t "su -c bash"'
+alias adb-root='adb shell -t su - -c bash'
 
 PS1='[\u@\h \W]\$ '
 
