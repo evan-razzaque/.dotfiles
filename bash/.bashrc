@@ -2,6 +2,12 @@
 # ~/.bashrc
 #
 
+fan_switch() {
+	asusctl profile -n > /dev/null
+	asusctl profile -p | grep --color=none profile
+}
+
+
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
