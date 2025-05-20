@@ -1,9 +1,3 @@
-function SourceFile(path)
-	if !empty(glob(a:path))
-		source a:path
-	endif
-endfunction
-
 unlet! skip_defaults_vim
 source $VIMRUNTIME/defaults.vim
 
@@ -18,9 +12,11 @@ call plug#begin()
 Plug 'arcticicestudio/nord-vim'
 Plug 'morhetz/gruvbox'
 Plug 'catppuccin/vim', { 'as': 'catppuccin' }
-Plug 'yegappan/lsp'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 call plug#end()
+
+let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-html']
 
 " Theme
 set termguicolors
@@ -37,5 +33,14 @@ set t_vb=
 " Mappings
 vnoremap <C-y> "+y| " Copy to system clipboard
 
-" Additional Config
-call SourceFile('~/.vim/lsp-config.vim')
+" Tab completion
+inoremap <silent><expr> <TAB>
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<Tab>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
