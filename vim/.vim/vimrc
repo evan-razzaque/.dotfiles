@@ -1,3 +1,9 @@
+function SourceFile(path)
+	if !empty(glob(a:path))
+		source a:path
+	endif
+endfunction
+
 unlet! skip_defaults_vim
 source $VIMRUNTIME/defaults.vim
 
@@ -12,14 +18,15 @@ call plug#begin()
 Plug 'arcticicestudio/nord-vim'
 Plug 'morhetz/gruvbox'
 Plug 'catppuccin/vim', { 'as': 'catppuccin' }
+Plug 'yegappan/lsp'
 
 call plug#end()
 
-" --Theme--
+" Theme
 set termguicolors
 color catppuccin_macchiato
 
-" --Settings--
+" Settings
 set number
 set relativenumber
 set shiftwidth=4
@@ -27,8 +34,8 @@ set tabstop=4
 set visualbell hidden 
 set t_vb=
 
-" --Mappings--
+" Mappings
+vnoremap <C-y> "+y| " Copy to system clipboard
 
-" Copy to system clipboard
-vnoremap <C-y> "+y
-
+" Additional Config
+call SourceFile('~/.vim/lsp-config.vim')
