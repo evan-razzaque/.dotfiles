@@ -8,7 +8,7 @@
 alias ls='ls --color=auto'
 alias la='ls -A'
 alias lr='ls -R'
-alias ll='la -lh'
+alias ll='ls -Alh'
 alias grep='grep --color=auto'
 
 alias vimsu='sudo -E vim'
