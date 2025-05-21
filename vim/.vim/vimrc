@@ -28,7 +28,10 @@ set relativenumber
 set shiftwidth=4
 set tabstop=4 
 set visualbell hidden 
-set t_vb=
+set t_vb= 
+
+" File type specific settings
+filetype plugin on
 
 " Mappings
 vnoremap <C-y> "+y| " Copy to system clipboard
