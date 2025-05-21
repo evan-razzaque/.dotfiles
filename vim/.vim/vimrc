@@ -13,9 +13,11 @@ Plug 'arcticicestudio/nord-vim'
 Plug 'morhetz/gruvbox'
 Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'alvan/vim-closetag'
 
 call plug#end()
 
+" coc.nvim
 let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-html', 'coc-css']
 
 " Theme
