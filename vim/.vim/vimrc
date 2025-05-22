@@ -13,12 +13,14 @@ Plug 'arcticicestudio/nord-vim'
 Plug 'morhetz/gruvbox'
 Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'alvan/vim-closetag'
 
 call plug#end()
 
 " coc.nvim
-let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-html', 'coc-css']
+let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-html', 'coc-css', 'coc-emmet']
+
+autocmd BufNewFile,BufRead *.tsx setlocal filetype=typescriptreact
+autocmd BufNewFile,BufRead *.jsx setlocal filetype=javascriptreact
 
 " Theme
 set termguicolors
@@ -38,14 +40,6 @@ filetype plugin on
 " Mappings
 vnoremap <C-y> "+y| " Copy to system clipboard
 
-" Tab completion
-inoremap <silent><expr> <TAB>
-      \ coc#pum#visible() ? coc#pum#next(1) :
-      \ CheckBackspace() ? "\<Tab>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
-
-function! CheckBackspace() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
+" Cofirm completion
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm(): "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+inoremap <silent><expr> <Tab> coc#pum#visible() ? coc#pum#confirm(): "<Tab>"
