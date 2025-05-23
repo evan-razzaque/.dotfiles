@@ -19,7 +19,7 @@ Plug 'maxmellon/vim-jsx-pretty'
 call plug#end()
 
 " coc.nvim
-let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-html', 'coc-css', 'coc-emmet']
+let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-html', 'coc-css', 'coc-emmet', 'coc-clangd']
 
 autocmd BufNewFile,BufRead *.tsx setlocal filetype=typescriptreact
 autocmd BufNewFile,BufRead *.jsx setlocal filetype=javascriptreact
@@ -45,3 +45,5 @@ vnoremap <C-y> "+y| " Copy to system clipboard
 " Cofirm completion
 inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm(): "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 inoremap <silent><expr> <Tab> coc#pum#visible() ? coc#pum#confirm(): "<Tab>"
+
+source ~/.vim/coc-config.vim
