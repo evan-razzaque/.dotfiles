@@ -19,7 +19,7 @@ Plug 'maxmellon/vim-jsx-pretty'
 call plug#end()
 
 " coc.nvim
-let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-html', 'coc-css', 'coc-emmet', 'coc-clangd']
+let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-html', 'coc-css', 'coc-emmet', 'coc-clangd', 'coc-vimlsp']
 
 autocmd BufNewFile,BufRead *.tsx setlocal filetype=typescriptreact
 autocmd BufNewFile,BufRead *.jsx setlocal filetype=javascriptreact
