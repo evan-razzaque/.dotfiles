@@ -18,7 +18,7 @@ PS1='[\u@\h \W]\$ '
 
 # Stop fastfetch from running in tmux panes
 if [ -f /usr/bin/fastfetch ]; then
-	if [[ -z $TMUX_PANE ]]; then
+	if [[ -z $TERM_PROGRAM ]]; then
 		fastfetch
 	fi
 fi
