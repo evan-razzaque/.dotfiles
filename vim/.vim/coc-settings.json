@@ -1,4 +1,7 @@
 {
 	"suggest.noselect": false,
-	"typescript.autoClosingTags": false
+	"typescript.autoClosingTags": false,
+	"javascript.autoClosingTags": false,
+	"coc.source.around.disableSyntaxes": ["comment"],
+	"inlayHint.enable": false
 }
