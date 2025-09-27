@@ -11,6 +11,7 @@ call plug#begin()
 
 Plug 'arcticicestudio/nord-vim'
 Plug 'catppuccin/vim', { 'as': 'catppuccin' }
+Plug 'vim-airline/vim-airline'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'HerringtonDarkholme/yats.vim'
 Plug 'yuezk/vim-js'
@@ -31,13 +32,19 @@ color catppuccin_macchiato
 " Settings
 set number
 set relativenumber
-set shiftwidth=4
-set tabstop=4 
+filetype plugin indent on
+
+" Use actual tab chars in Makefiles
+autocmd FileType make set tabstop=4 shiftwidth=4 softtabstop=0 noexpandtab
+
+" Indentation
+set shiftwidth=4 smarttab
+set expandtab
+set tabstop=4 softtabstop=0
+
+" Bell
 set visualbell hidden 
 set t_vb= 
-
-" File type specific settings
-filetype plugin on
 
 " Mappings
 vnoremap <C-y> "+y| " Copy to system clipboard
