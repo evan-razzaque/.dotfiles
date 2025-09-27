@@ -13,6 +13,9 @@ alias lr='ls -R'
 alias ll='ls -Alh'
 alias grep='grep --color=auto'
 
+# Ubuntu being Ubuntu
+unset command_not_found_handle
+
 # Stop fastfetch from running in tmux panes
 if [ -f /usr/bin/fastfetch ]; then
 	if [ -z $TERM_PROGRAM ]; then
@@ -24,3 +27,5 @@ fi
 if [ -f ~/.bash_aliases ]; then
 	source ~/.bash_aliases
 fi
+
+export EDITOR=vim
