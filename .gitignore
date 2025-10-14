@@ -1,2 +1,6 @@
 # tmux
 plugins
+
+# ignored packages
+.ignore/*
+!.ignore/README.txt
