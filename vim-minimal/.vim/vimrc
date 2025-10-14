@@ -1,0 +1,44 @@
+unlet! skip_defaults_vim
+source $VIMRUNTIME/defaults.vim
+
+let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+if empty(glob(data_dir . '/autoload/plug.vim'))
+  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin()
+
+Plug 'arcticicestudio/nord-vim'
+Plug 'catppuccin/vim', { 'as': 'catppuccin' }
+Plug 'vim-airline/vim-airline'
+
+call plug#end()
+
+autocmd BufNewFile,BufRead *.tsx setlocal filetype=typescriptreact
+autocmd BufNewFile,BufRead *.jsx setlocal filetype=javascriptreact
+
+" Theme
+set termguicolors
+color catppuccin_macchiato
+
+" Settings
+set number
+set relativenumber
+filetype plugin indent on
+
+" Use actual tab chars in Makefiles
+autocmd FileType make set tabstop=4 shiftwidth=4 softtabstop=0 noexpandtab
+
+" Indentation
+set shiftwidth=4 smarttab
+set expandtab
+set tabstop=4 softtabstop=0
+
+" Bell
+set visualbell hidden 
+set t_vb= 
+
+" Mappings
+vnoremap <C-y> "+y| " Copy to system clipboard
+
