@@ -13,6 +13,10 @@ alias lr='ls -R'
 alias ll='ls -Alh'
 alias grep='grep --color=auto'
 
+alias clipboard='xsel -b'
+alias du='du --exclude /proc'
+alias open='xdg-open'
+
 # Ubuntu being Ubuntu
 unset command_not_found_handle
 
@@ -26,6 +30,11 @@ fi
 # User-defined aliases
 if [ -f ~/.bash_aliases ]; then
 	source ~/.bash_aliases
+fi
+
+# Shell functions
+if [ -f ~/.bash_functions ]; then
+    source ~/.bash_functions
 fi
 
 export EDITOR=vim
