@@ -1,14 +1,18 @@
 {
-	"suggest.noselect": false,
-	"typescript.autoClosingTags": false,
-	"javascript.autoClosingTags": false,
-	"coc.source.around.disableSyntaxes": ["comment"],
-	"inlayHint.enable": false,
-	"clangd.arguments": [
+    "suggest.noselect": false,
+    "typescript.autoClosingTags": false,
+    "javascript.autoClosingTags": false,
+    "coc.source.around.disableSyntaxes": [
+        "comment"
+    ],
+    "inlayHint.enable": false,
+    "clangd.arguments": [
         "--function-arg-placeholders=0",
         "--header-insertion=never"
     ],
-	"pairs.disableLanguages": ["sh"],
+    "pairs.disableLanguages": [
+        "sh"
+    ],
     "typescript.suggest.completeFunctionCalls": false,
     "javascript.suggest.completeFunctionCalls": false,
     "javascript.suggest.autoImports": false,
