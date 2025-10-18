@@ -6,6 +6,10 @@
 	helper = 
 	helper = !/usr/bin/gh auth git-credential
 
+[user]
+	email = evan.razzaque7@gmail.com
+	name = evan-razzaque
+
 [init]
 	defaultBranch = main
 
