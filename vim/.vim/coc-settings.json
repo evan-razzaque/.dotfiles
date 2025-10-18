@@ -8,5 +8,8 @@
         "--function-arg-placeholders=0",
         "--header-insertion=never"
     ],
-	"pairs.disableLanguages": ["sh"]
+	"pairs.disableLanguages": ["sh"],
+    "typescript.suggest.completeFunctionCalls": false,
+    "javascript.suggest.completeFunctionCalls": false,
+    "javascript.suggest.autoImports": false,
 }
