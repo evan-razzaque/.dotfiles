@@ -17,6 +17,10 @@ alias clipboard='xsel -b'
 alias du='du --exclude /proc'
 alias open='xdg-open'
 
+alias mohawk-vpn='sudo gpclient --ignore-tls-errors --fix-openssl connect https://acadvpn.mohawkcollege.ca/'
+alias haste_hid='hidapitester -q --vidpid 03f0 --usagePage 0xff00 --open --width 16 --length 64'
+alias compiledb='compiledb --command-style'
+
 # Ubuntu being Ubuntu
 unset command_not_found_handle
 
@@ -37,4 +41,3 @@ if [ -f ~/.bash_functions ]; then
     source ~/.bash_functions
 fi
 
-export EDITOR=vim
