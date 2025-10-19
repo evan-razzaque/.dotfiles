@@ -6,3 +6,4 @@ fi
 
 stow --adopt -v */
 git restore .
+git clean -fd
