@@ -13,6 +13,7 @@
     "pairs.disableLanguages": [
         "sh"
     ],
+    "pairs.requireEOLCharacters": ["("],
     "typescript.suggest.completeFunctionCalls": false,
     "javascript.suggest.completeFunctionCalls": false,
     "javascript.suggest.autoImports": false,

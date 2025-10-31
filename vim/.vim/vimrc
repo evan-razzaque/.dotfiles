@@ -48,5 +48,6 @@ set t_vb=
 
 " Mappings
 vnoremap <C-y> "+y| " Copy to system clipboard
+noremap ; :
 
 source ~/.vim/coc-config.vim
