@@ -1,0 +1,31 @@
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/master/doc/json_schema.json",
+  "modules": [
+    "title",
+    "separator",
+    "os",
+    "host",
+    "kernel",
+    {
+        "type": "command",
+        "key": "Startup Time",
+        "text": "systemd-analyze | grep -Po '(?<== ).*s'"
+    },
+    "packages",
+    "shell",
+    "de",
+    "wm",
+    "terminal",
+    "display",
+    "cpu",
+    "gpu",
+    "memory",
+    "swap",
+    "disk",
+    "localip",
+    "battery",
+    "poweradapter",
+    "break",
+    "colors"
+  ]
+}
