@@ -16,9 +16,17 @@
     "de",
     "wm",
     "terminal",
-    "display",
+    {
+        "type": "display",
+        "key": "Dispaly ({name})",
+        "format": "{width}x{height} in {inch}\", {refresh-rate} Hz"
+    },
     "cpu",
-    "gpu",
+    {
+        "type": "gpu",
+        "key": "GPU {index}",
+        "format": "{vendor} {name} {?frequency}@ {frequency}{?}"
+    },
     "memory",
     "swap",
     "disk",
