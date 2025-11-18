@@ -34,20 +34,25 @@ set number
 set relativenumber
 filetype plugin indent on
 
-" Use actual tab chars in Makefiles
-autocmd FileType make set tabstop=4 shiftwidth=4 softtabstop=0 noexpandtab
-
 " Indentation
 set shiftwidth=4 smarttab
 set expandtab
 set tabstop=4 softtabstop=0
 
 " Bell
-set visualbell hidden 
-set t_vb= 
+set visualbell hidden
+set t_vb=
 
 " Mappings
 vnoremap <C-y> "+y| " Copy to system clipboard
 noremap ; :
+noremap \rs :%s/\v\s+$//g<CR>g`'| " Remove trailing whitespace
+
+function s:source(file)
+    if !empty(glob(a:file))
+        exec "source " . a:file
+    endif
+endfunction
 
 source ~/.vim/coc-config.vim
+call s:source("~/.vim/functions.vim")
