@@ -8,10 +8,12 @@
 PS1='[\u@\h \W]\$ '
 
 alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+alias ip='ip --color'
+
 alias la='ls -A'
 alias lr='ls -R'
 alias ll='ls -Alh'
-alias grep='grep --color=auto'
 
 alias clipboard='xsel -b'
 alias du='du --exclude /proc'
@@ -40,4 +42,3 @@ fi
 if [ -f ~/.bash_functions ]; then
     source ~/.bash_functions
 fi
-
