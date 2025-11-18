@@ -24,7 +24,8 @@
     "cpu",
     {
         "type": "gpu",
-        "key": "GPU {index}",
+        "key": "GPU",
+        "hideType": "integrated",
         "format": "{vendor} {name} {?frequency}@ {frequency}{?}"
     },
     "memory",
