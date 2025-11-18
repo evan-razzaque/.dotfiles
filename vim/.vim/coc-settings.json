@@ -6,10 +6,12 @@
         "comment"
     ],
     "inlayHint.enable": false,
+    "clangd.path": "/usr/bin/clangd",
     "clangd.arguments": [
         "--function-arg-placeholders=0",
         "--header-insertion=never"
     ],
+    "semanticTokens.enable": true,
     "pairs.disableLanguages": [
         "sh"
     ],
