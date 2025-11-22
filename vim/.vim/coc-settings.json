@@ -1,11 +1,9 @@
 {
     "suggest.noselect": false,
-    "typescript.autoClosingTags": false,
-    "javascript.autoClosingTags": false,
+    "inlayHint.enable": false,
     "coc.source.around.disableSyntaxes": [
         "comment"
     ],
-    "inlayHint.enable": false,
     "clangd.path": "/usr/bin/clangd",
     "clangd.arguments": [
         "--function-arg-placeholders=0",
@@ -16,7 +14,14 @@
         "sh"
     ],
     "pairs.requireEOLCharacters": ["("],
-    "typescript.suggest.completeFunctionCalls": false,
+    "javascript.autoClosingTags": false,
     "javascript.suggest.completeFunctionCalls": false,
     "javascript.suggest.autoImports": false,
+    "typescript.autoClosingTags": false,
+    "typescript.suggest.completeFunctionCalls": false,
+    "typescript.suggest.autoImports": false,
+
+    "[sh]": {
+        "suggest.autoTrigger": "none"
+    }
 }
