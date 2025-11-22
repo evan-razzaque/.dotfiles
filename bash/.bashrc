@@ -19,16 +19,17 @@ alias clipboard='xsel -b'
 alias du='du --exclude /proc'
 alias open='xdg-open'
 
-alias mohawk-vpn='sudo gpclient --ignore-tls-errors --fix-openssl connect https://acadvpn.mohawkcollege.ca/'
-alias haste_hid='hidapitester -q --vidpid 03f0 --usagePage 0xff00 --open --width 16 --length 64'
 alias compiledb='compiledb --command-style'
 
 # Ubuntu being Ubuntu
 unset command_not_found_handle
 
-# Stop fastfetch from running in tmux panes
-if [ -f /usr/bin/fastfetch ]; then
-	if [ -z $TERM_PROGRAM ]; then
+# Stop fastfetch from running in additional tmux panes and windows, as well as intergrated terminals (eg. vscode)
+if command -v tmux > /dev/null 2>&1; then
+    read TMUX_WINDOW_PANE_INDEX < <(tmux display-message -p "#{window_index},#{pane_index}")
+
+    # Assumes base-index for windows and panes is 1; adjust if necessary
+	if [ -z $TERM_PROGRAM -o "$TMUX_WINDOW_PANE_INDEX" == "1,1" ]; then
 		fastfetch
 	fi
 fi
