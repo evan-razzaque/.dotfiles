@@ -27,9 +27,11 @@ unset command_not_found_handle
 # Stop fastfetch from running in additional tmux panes and windows, as well as intergrated terminals (eg. vscode)
 if command -v tmux > /dev/null 2>&1; then
     read TMUX_WINDOW_PANE_INDEX < <(tmux display-message -p "#{window_index},#{pane_index}")
+    read TMUX_PANE_COUNT < <(tmux list-panes | wc -l)
 
     # Assumes base-index for windows and panes is 1; adjust if necessary
-	if [ -z $TERM_PROGRAM -o "$TMUX_WINDOW_PANE_INDEX" == "1,1" ]; then
+    if [[ -z $TERM_PROGRAM \
+        || "$TMUX_WINDOW_PANE_INDEX" == "1,1" && "$TMUX_PANE_COUNT" == "1" ]]; then
 		fastfetch
 	fi
 fi
