@@ -21,17 +21,22 @@ alias open='xdg-open'
 
 alias compiledb='compiledb --command-style'
 
+alias tmux-new='tmux new -s "#{server_sessions}"'
+
 # Ubuntu being Ubuntu
 unset command_not_found_handle
 
-# Stop fastfetch from running in additional tmux panes and windows, as well as intergrated terminals (eg. vscode)
-if command -v tmux > /dev/null 2>&1; then
-    read TMUX_WINDOW_PANE_INDEX < <(tmux display-message -p "#{window_index},#{pane_index}")
-    read TMUX_PANE_COUNT < <(tmux list-panes | wc -l)
+# Some systems alias which (who knows why, just use type)
+unalias which 2> /dev/null
+
+# Stop fastfetch from running multiple times in a tmux session, as well as intergrated terminals (eg. vscode)
+if command -v fastfetch > /dev/null 2>&1; then
+    read TMUX_WINDOW_COUNT < <(tmux list-windows 2> /dev/null | wc -l)
+    read TMUX_PANE_COUNT < <(tmux list-panes 2> /dev/null | wc -l)
 
     # Assumes base-index for windows and panes is 1; adjust if necessary
     if [[ -z $TERM_PROGRAM \
-        || "$TMUX_WINDOW_PANE_INDEX" == "1,1" && "$TMUX_PANE_COUNT" == "1" ]]; then
+        || "$TMUX_WINDOW_COUNT" == "1" && "$TMUX_PANE_COUNT" == "1" ]]; then
 		fastfetch
 	fi
 fi
