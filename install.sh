@@ -1,8 +1,7 @@
 #!/bin/bash
 
-if [ ! -d ~/.vim ]; then
-	mkdir ~/.vim
-fi
+mkdir -p .vim
+mkdir -p .config/tmux/scripts
 
 git add -A
 stow --adopt -v */ 2>&1 | grep -vP '^MV'
