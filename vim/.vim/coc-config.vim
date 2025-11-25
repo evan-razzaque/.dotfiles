@@ -11,6 +11,9 @@ inoremap <silent><expr> <Tab> coc#pum#visible() ? coc#pum#confirm(): "<Tab>"
 " Confirm the completion when popupmenu is visible, insert <CR> and notify coc.nvim otherwise. 
 inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm(): "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
+" Naviage completion items when popupmenu is visible
+inoremap <silent><expr> <C-j> coc#pum#visible() ? coc#pum#next(0) : "<C-j>"
+inoremap <silent><expr> <C-k> coc#pum#visible() ? coc#pum#prev(0) : "<C-k>"
 
 " Use `[g` and `]g` to navigate diagnostics
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list
