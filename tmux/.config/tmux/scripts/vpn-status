@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+if [ -n "$(ip link show type tun)" ]; then
+    echo connected
+else
+    echo disconnected
+fi
