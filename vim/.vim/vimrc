@@ -16,6 +16,7 @@ Plug 'vim-airline/vim-airline'
 Plug 'HerringtonDarkholme/yats.vim'
 Plug 'yuezk/vim-js'
 Plug 'maxmellon/vim-jsx-pretty'
+Plug 'vim-scripts/DoxygenToolkit.vim'
 
 if (executable("node"))
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
