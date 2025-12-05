@@ -26,7 +26,7 @@ endif
 call plug#end()
 
 " coc.nvim
-let g:coc_global_extensions = ['coc-json', 'coc-pairs', 'coc-tsserver', 'coc-html', 'coc-css', 'coc-emmet', 'coc-clangd', 'coc-vimlsp', 'coc-sh']
+let g:coc_global_extensions = ['coc-json', 'coc-pairs', 'coc-tsserver', 'coc-html', 'coc-css', 'coc-emmet', 'coc-clangd', 'coc-vimlsp', 'coc-sh', 'coc-webview', 'coc-markdown-preview-enhanced', '@yaegassy/coc-marksman']
 
 autocmd BufNewFile,BufRead *.tsx setlocal filetype=typescriptreact
 autocmd BufNewFile,BufRead *.jsx setlocal filetype=javascriptreact
