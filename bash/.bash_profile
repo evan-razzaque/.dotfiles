@@ -8,5 +8,7 @@ export MAKEFLAGS="--jobs=$(nproc) --output-sync"
 export EDITOR=vim
 export TIME_STYLE=long-iso
 
+export PYTHONPATH=$PYTHONPATH:$(find /usr/local/lib -name "site-packages")
+
 [[ -f ~/.bashrc ]] && . ~/.bashrc
 
