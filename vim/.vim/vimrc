@@ -31,6 +31,14 @@ let g:coc_global_extensions = ['coc-json', 'coc-pairs', 'coc-tsserver', 'coc-htm
 autocmd BufNewFile,BufRead *.tsx setlocal filetype=typescriptreact
 autocmd BufNewFile,BufRead *.jsx setlocal filetype=javascriptreact
 
+function! s:set_readonly()
+	if (&readonly)
+		set nomodifiable
+	endif
+endfunction
+
+autocmd	BufNewFile,BufRead * call s:set_readonly()
+
 " Theme
 set termguicolors
 color catppuccin_macchiato
@@ -42,7 +50,6 @@ filetype plugin indent on
 
 " Indentation
 set shiftwidth=4 smarttab
-set expandtab
 set tabstop=4 softtabstop=0
 
 " Bell
@@ -50,6 +57,9 @@ set visualbell hidden
 set t_vb=
 
 " Mappings
+noremap <C-a> <Nop>| " Fix tmux prefix key conflict
+noremap <leader>i <C-a>
+
 vnoremap <C-y> "+y| " Copy to system clipboard
 noremap ; :
 noremap \rs :%s/\v\s+$//g<CR>g`'| " Remove trailing whitespace
