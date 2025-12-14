@@ -13,7 +13,7 @@
     "pairs.disableLanguages": [
         "sh"
     ],
-    "pairs.requireEOLCharacters": ["("],
+    "pairs.requireEOLCharacters": ["(", "<"],
     "javascript.autoClosingTags": false,
     "javascript.suggest.completeFunctionCalls": false,
     "javascript.suggest.autoImports": false,

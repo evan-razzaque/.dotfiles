@@ -34,10 +34,12 @@ autocmd BufNewFile,BufRead *.jsx setlocal filetype=javascriptreact
 function! s:set_readonly()
 	if (&readonly)
 		set nomodifiable
+	else
+		set modifiable
 	endif
 endfunction
 
-autocmd	BufNewFile,BufRead * call s:set_readonly()
+autocmd	BufWinEnter * call s:set_readonly()
 
 " Theme
 set termguicolors
