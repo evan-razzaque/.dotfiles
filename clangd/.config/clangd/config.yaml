@@ -1,0 +1,13 @@
+CompileFlags:
+  Add: [-Wall, -Werror, -Werror=vla]
+Completion:
+  AllScopes: No
+  ArgumentLists: None
+  HeaderInsertion: Never
+  CodePatterns: None
+InlayHints:
+  Enabled: false
+Hover:
+  ShowAKA: true
+Diagnostics:
+  UnusedIncludes: None
