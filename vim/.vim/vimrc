@@ -3,9 +3,9 @@ source $VIMRUNTIME/defaults.vim
 
 let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
 if empty(glob(data_dir . '/autoload/plug.vim'))
-  silent execute '!mkdir -p ' .data_dir.'/autoload/'
-  silent execute '!wget -O '.data_dir.'/autoload/plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+	silent execute '!mkdir -p ' .data_dir.'/autoload/'
+	silent execute '!wget -O '.data_dir.'/autoload/plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+	autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
 call plug#begin()
@@ -19,8 +19,8 @@ Plug 'maxmellon/vim-jsx-pretty'
 Plug 'vim-scripts/DoxygenToolkit.vim'
 
 if (executable("node"))
-  Plug 'neoclide/coc.nvim', {'branch': 'release'}
-  source ~/.vim/coc-config.vim
+	Plug 'neoclide/coc.nvim', {'branch': 'release'}
+	source ~/.vim/coc-config.vim
 endif
 
 call plug#end()
@@ -67,9 +67,9 @@ noremap ; :
 noremap \rs :%s/\v\s+$//g<CR>g`'| " Remove trailing whitespace
 
 function s:source(file)
-    if !empty(glob(a:file))
-        exec "source " . a:file
-    endif
+	if !empty(glob(a:file))
+			exec "source " . a:file
+	endif
 endfunction
 
 call s:source("~/.vim/functions.vim")
