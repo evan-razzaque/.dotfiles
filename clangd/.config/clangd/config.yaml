@@ -1,5 +1,5 @@
 CompileFlags:
-  Add: [-Wall, -Werror, -Werror=vla]
+  Add: [-Wall, -Werror, -Werror=vla, -xc-header]
 Completion:
   AllScopes: No
   ArgumentLists: None

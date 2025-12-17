@@ -54,6 +54,9 @@ endfunction
 
 autocmd	BufWinEnter * call s:set_readonly()
 
+" Variables
+let g:filetype_h = "c"
+
 " Theme
 set termguicolors
 color catppuccin_macchiato
