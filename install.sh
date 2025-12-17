@@ -1,12 +1,9 @@
 #!/bin/bash
 
-mkdir -p .vim
-mkdir -p .config/tmux/scripts
-
 git config --global include.path .gitconfig-extra
 
 git add -A
-stow --adopt -v */ 2>&1 | grep -vP '^MV'
+stow --adopt --no-folding -v */ 2>&1 | grep -vP '^MV'
 
 # Restore changes from stow
 git restore .
