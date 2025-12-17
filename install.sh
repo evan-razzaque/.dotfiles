@@ -3,6 +3,8 @@
 mkdir -p .vim
 mkdir -p .config/tmux/scripts
 
+git config --global include.path .gitconfig-extra
+
 git add -A
 stow --adopt -v */ 2>&1 | grep -vP '^MV'
 
