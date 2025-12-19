@@ -9,6 +9,6 @@ Optional packages:
 - nodejs (required by coc.nvim)
 - github-cli (required for git credential helper)
 
-1. Backup existing dotfiles for each package in this repository (.bashrc, .gitconfig, etc.)
+1. Backup existing dotfiles for each package in this repository (.bashrc, .bash_profile, etc.)
 2. Run ```preview.sh``` to see which files will be created/overwritten
 3. Run ```install.sh``` to create the symlinks for each package
