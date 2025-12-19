@@ -1,6 +1,18 @@
 #!/bin/bash
 
-git config --global include.path .gitconfig-extra
+# Add git config option without duplicate values
+git-set-config() {
+	local option=$1
+	local value=$2
+	git config set --global --value $value --all $option $value
+}
+
+git-set-config include.path .gitconfig-extra
+
+# Check if user has github-cli for git credential helper
+if command -v gh > /dev/null; then
+	git-set-config include.path .gitconfig-credential
+fi
 
 git add -A
 stow --adopt --no-folding -v */ 2>&1 | grep -vP '^MV'
