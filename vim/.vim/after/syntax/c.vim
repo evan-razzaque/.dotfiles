@@ -53,4 +53,3 @@ call s:hi("Function", "NONE", s:text, "NONE", "NONE", "NONE")
 call s:hi("Identifier", "NONE", s:text, "NONE", "NONE", "NONE")
 call s:hi("CocSemTypeClass", "NONE", s:sky, "NONE", "NONE", "NONE")
 call s:hi("CocSemTypeLabel", "NONE", s:peach, "NONE", "NONE", "NONE")
-
