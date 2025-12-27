@@ -54,3 +54,6 @@ call s:hi("Identifier", "NONE", s:text, "NONE", "NONE", "NONE")
 call s:hi("CocSemTypeClass", "NONE", s:sky, "NONE", "NONE", "NONE")
 call s:hi("CocSemTypeLabel", "NONE", s:peach, "NONE", "NONE", "NONE")
 
+hi CocSemTypeModMacroGlobalScope guifg=White
+syntax keyword CocSemTypeModMacroGlobalScope INT32_MAX containedin=cBlock,cParen,cConstant contained
+
