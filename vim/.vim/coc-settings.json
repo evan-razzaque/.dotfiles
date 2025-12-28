@@ -4,7 +4,6 @@
     "coc.source.around.disableSyntaxes": [
         "comment"
     ],
-    "clangd.path": "/usr/bin/clangd",
     "semanticTokens.enable": true,
     "pairs.disableLanguages": [
         "sh"
