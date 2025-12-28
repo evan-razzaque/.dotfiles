@@ -30,16 +30,18 @@ unset command_not_found_handle
 unalias which 2> /dev/null
 
 # Stop fastfetch from running multiple times in a tmux session, as well as intergrated terminals (eg. vscode)
-if command -v fastfetch > /dev/null 2>&1; then
+# Also allows for fastfetch to be turned off in your terminal's start command
+if command -v fastfetch > /dev/null 2>&1 && [ "$FASTFETCH" != 0 ]; then
     read TMUX_WINDOW_COUNT < <(tmux list-windows 2> /dev/null | wc -l)
     read TMUX_PANE_COUNT < <(tmux list-panes 2> /dev/null | wc -l)
 
-    # Assumes base-index for windows and panes is 1; adjust if necessary
     if [[ -z $TERM_PROGRAM \
         || "$TMUX_WINDOW_COUNT" == "1" && "$TMUX_PANE_COUNT" == "1" ]]; then
 		fastfetch
 	fi
 fi
+
+unset FASTFETCH
 
 # User-defined aliases
 if [ -f ~/.bash_aliases ]; then
