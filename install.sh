@@ -16,13 +16,9 @@ if command -v gh > /dev/null; then
 	git-set-config include.path .gitconfig-credential
 fi
 
-git add -A
 stow -R --adopt --no-folding -v */ 2>&1 | ./filter-stow-output.sh
 
-# Restore changes from stow
+# Restore changes from stow and any files ignored during installation
 git restore .
 
-# Restore working tree prior to installation
-git restore --staged .
-mv .ignore/* -t .
-mv README.txt .ignore
+git clean -fd .ignore

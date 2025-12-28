@@ -1,1 +1,1 @@
-Move unwanted packages here during when running install.sh
+Move unwanted packages/files here when running install.sh

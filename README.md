@@ -1,6 +1,5 @@
 # Installation
-**Warning:** Make sure to look through each dotfile and move the ones you don't want to .ignore/ before installation.
-> If you have any staged files, they will be unstaged after installation.
+**Warning:** Make sure to look through each package/file and move the ones you don't want to .ignore/ before installation.
 
 Required packages:
 - stow
