@@ -16,13 +16,11 @@ append-paths() {
 }
 
 append-paths PATH ~/.bin ~/.local/bin
+append-paths PYTHONPATH $(find /usr/local/lib -name "site-packages" 2> /dev/null)
 
 export MAKEFLAGS="--jobs=$(nproc) --output-sync"
-
 export EDITOR=vim
 export TIME_STYLE=long-iso
-
-export PYTHONPATH=$PYTHONPATH:$(find /usr/local/lib -name "site-packages" 2> /dev/null)
 
 unset -f append-paths
 
