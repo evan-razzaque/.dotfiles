@@ -20,6 +20,11 @@ Plug 'maxmellon/vim-jsx-pretty'
 Plug 'vim-scripts/DoxygenToolkit.vim'
 Plug 'devsjc/vim-jb'
 
+if (executable("ag"))
+	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+	Plug 'junegunn/fzf.vim'
+endif
+
 if (executable("node"))
 	Plug 'neoclide/coc.nvim', {'branch': 'release'}
 	source ~/.vim/coc-config.vim
