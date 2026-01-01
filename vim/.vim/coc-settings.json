@@ -9,6 +9,7 @@
         "sh"
     ],
     "pairs.requireEOLCharacters": ["(", "<"],
+    "java.completion.guessMethodArguments": "off",
     "javascript.autoClosingTags": false,
     "javascript.suggest.completeFunctionCalls": false,
     "javascript.suggest.autoImports": false,

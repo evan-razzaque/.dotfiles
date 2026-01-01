@@ -13,10 +13,12 @@ call plug#begin()
 Plug 'arcticicestudio/nord-vim'
 Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 Plug 'HerringtonDarkholme/yats.vim'
 Plug 'yuezk/vim-js'
 Plug 'maxmellon/vim-jsx-pretty'
 Plug 'vim-scripts/DoxygenToolkit.vim'
+Plug 'devsjc/vim-jb'
 
 if (executable("node"))
 	Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -34,6 +36,7 @@ let g:coc_global_extensions = [
 	\ 'coc-css',
 	\ 'coc-emmet',
 	\ 'coc-clangd',
+	\ 'coc-java',
 	\ 'coc-vimlsp',
 	\ 'coc-sh',
 	\ 'coc-webview',
@@ -56,6 +59,10 @@ autocmd	BufWinEnter * call s:set_readonly()
 
 " Variables
 let g:filetype_h = "c"
+
+" Airline
+let g:airline_skip_empty_sections = 1
+let g:airline_powerline_fonts = 1
 
 " Theme
 set termguicolors
