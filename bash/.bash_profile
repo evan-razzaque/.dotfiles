@@ -22,6 +22,13 @@ export MAKEFLAGS="--jobs=$(nproc) --output-sync"
 export EDITOR=vim
 export TIME_STYLE=long-iso
 
+# User-defined environment variables
+if [ -f ~/.bash_env ]; then
+	set -o allexport
+	source ~/.bash_env
+	set +o allexport
+fi
+
 unset -f append-paths
 
 [[ -f ~/.bashrc ]] && . ~/.bashrc
