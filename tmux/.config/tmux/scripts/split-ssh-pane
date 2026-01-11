@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# If the pane is ssh, output the ssh command. Otherwise, output nothing.
+ssh-pane-cmd() {
+	local pane_pid=$(tmux display-message -p "#{pane_pid}")
+
+	ps -o command= -g $pane_pid | grep -P '^ssh'
+}
+
+DIRECTION="$1"
+SSH_CMD="$(ssh-pane-cmd)"
+
+if [[ -z "$SSH_CMD" ]]; then
+	exec tmux split-window -c "#{pane_current_path}" $DIRECTION
+fi
+
+tmux split-window $DIRECTION "$SSH_CMD; \
+	cd $(tmux display -p '#{pane_current_path}'); bash"
