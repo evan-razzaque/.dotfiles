@@ -19,6 +19,7 @@ Plug 'yuezk/vim-js'
 Plug 'maxmellon/vim-jsx-pretty'
 Plug 'vim-scripts/DoxygenToolkit.vim'
 Plug 'devsjc/vim-jb'
+Plug 'tpope/vim-commentary'
 
 if (executable("ag"))
 	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -42,6 +43,7 @@ let g:coc_global_extensions = [
 	\ 'coc-emmet',
 	\ 'coc-clangd',
 	\ 'coc-java',
+	\ 'coc-pyright',
 	\ 'coc-vimlsp',
 	\ 'coc-sh',
 	\ 'coc-webview',
