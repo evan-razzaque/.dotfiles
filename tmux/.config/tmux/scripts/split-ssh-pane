@@ -1,18 +1,58 @@
 #!/usr/bin/env bash
 
 # If the pane is ssh, output the ssh command. Otherwise, output nothing.
-ssh-pane-cmd() {
+get-ssh-pane-cmd() {
 	local pane_pid=$(tmux display-message -p "#{pane_pid}")
 
-	ps -o command= -g $pane_pid | grep -P '^ssh'
+	ps -o command= -g $pane_pid | grep -P '^ssh' | sed -E 's/ -t PID=.*bash//'
+}
+
+tmux-get-target-id() {
+	tmux display-message -p "#{session_id}:#{window_id}:#{pane_id}" | tr -d '$@%'
+}
+
+tmux-get-window-id() {
+	tmux display-message -p "#{session_id}:#{window_id}" | tr -d '$@'
+}
+
+tmux-get-ssh-pane-pty() {
+	local target_id=$1
+	tmux show-environment -g SSH_PTY_$target_id 2> /dev/null | grep -Po '(?<==).+'
+}
+
+tmux-set-ssh-pane-pty() {
+	local target_id=$1
+	local pty=$2
+
+	tmux set-environment -g SSH_PTY_$target_id $pty
+}
+
+get-last-ssh-pty() {
+	local ssh_cmd="$1"
+	local ssh_pty_no=$($ssh_cmd 'ls -lt /dev/pts | grep $USER | grep -Po "\d+$" | head -1')
+
+	echo /dev/pts/$ssh_pty_no
 }
 
 DIRECTION="$1"
-SSH_CMD="$(ssh-pane-cmd)"
+SSH_CMD="$(get-ssh-pane-cmd)"
 
 if [[ -z "$SSH_CMD" ]]; then
 	exec tmux split-window -c "#{pane_current_path}" $DIRECTION
+	exit
 fi
 
-tmux split-window $DIRECTION "$SSH_CMD; \
-	cd $(tmux display -p '#{pane_current_path}'); bash"
+SSH_PTY="$(tmux-get-ssh-pane-pty $(tmux-get-target-id))"
+
+if [[ -z "$SSH_PTY" ]]; then
+	SSH_PTY=$(get-last-ssh-pty "$SSH_CMD")
+	tmux-set-ssh-pane-pty $(tmux-get-target-id) $SSH_PTY
+fi
+
+PANE_ID=$(tmux split-window -PF "#{pane_id}" $DIRECTION $SSH_CMD -t \
+	"PID=\$(ps -o pid= -t $SSH_PTY | head -1 | tr -d ' '); \
+	cd -P /proc/\$PID/cwd; bash" | tr -d '%')
+
+get-last-ssh-pty "$SSH_CMD"
+tmux-set-ssh-pane-pty "$(tmux-get-window-id):$PANE_ID" $(get-last-ssh-pty "$SSH_CMD")
+
