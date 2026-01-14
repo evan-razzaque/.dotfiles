@@ -17,14 +17,14 @@ tmux-get-window-id() {
 
 tmux-get-ssh-pane-pty() {
 	local target_id=$1
-	tmux show-environment -g SSH_PTY_$target_id 2> /dev/null | grep -Po '(?<==).+'
+	tmux show-environment SSH_PTY_$target_id 2> /dev/null | grep -Po '(?<==).+'
 }
 
 tmux-set-ssh-pane-pty() {
 	local target_id=$1
 	local pty=$2
 
-	tmux set-environment -g SSH_PTY_$target_id $pty
+	tmux set-environment SSH_PTY_$target_id $pty
 }
 
 get-last-ssh-pty() {
@@ -42,17 +42,18 @@ if [[ -z "$SSH_CMD" ]]; then
 	exit
 fi
 
-SSH_PTY="$(tmux-get-ssh-pane-pty $(tmux-get-target-id))"
+# SSH_PTY="$(tmux-get-ssh-pane-pty $(tmux-get-target-id))"
 
-if [[ -z "$SSH_PTY" ]]; then
-	SSH_PTY=$(get-last-ssh-pty "$SSH_CMD")
-	tmux-set-ssh-pane-pty $(tmux-get-target-id) $SSH_PTY
-fi
+# if [[ -z "$SSH_PTY" ]]; then
+# 	SSH_PTY=$(get-last-ssh-pty "$SSH_CMD")
+# 	tmux-set-ssh-pane-pty $(tmux-get-target-id) $SSH_PTY
+# fi
 
-PANE_ID=$(tmux split-window -PF "#{pane_id}" $DIRECTION $SSH_CMD -t \
-	"PID=\$(ps -o pid= -t $SSH_PTY | head -1 | tr -d ' '); \
-	cd -P /proc/\$PID/cwd; bash" | tr -d '%')
+exec tmux split-window -c "#{pane_current_path}" $DIRECTION "$SSH_CMD; bash"
 
-get-last-ssh-pty "$SSH_CMD"
-tmux-set-ssh-pane-pty "$(tmux-get-window-id):$PANE_ID" $(get-last-ssh-pty "$SSH_CMD")
+# PANE_ID=$(tmux split-window -PF "#{pane_id}" $DIRECTION $SSH_CMD -t \
+# 	"PID=\$(ps -o pid= -t $SSH_PTY | tail -1 | tr -d ' '); \
+# 	cd -P /proc/\$PID/cwd; bash" | tr -d '%')
+
+# tmux-set-ssh-pane-pty "$(tmux-get-window-id):$PANE_ID" $(get-last-ssh-pty "$SSH_CMD")
 
