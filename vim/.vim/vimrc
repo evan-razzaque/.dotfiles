@@ -69,8 +69,9 @@ autocmd	BufWinEnter * call s:set_readonly()
 let g:filetype_h = "c"
 
 " Airline
-let g:airline_skip_empty_sections = 1
 let g:airline_powerline_fonts = 1
+let g:airline_left_sep = ""
+let g:airline_right_sep = ""
 
 " Theme
 set termguicolors
