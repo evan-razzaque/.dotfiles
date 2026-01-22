@@ -43,7 +43,8 @@ let g:coc_global_extensions = [
 	\ 'coc-emmet',
 	\ 'coc-clangd',
 	\ 'coc-java',
-	\ 'coc-phpls',
+	\ '@yaegassy/coc-intelephense',
+	\ '@yaegassy/coc-laravel',
 	\ 'coc-pyright',
 	\ 'coc-vimlsp',
 	\ 'coc-sh',
@@ -80,6 +81,7 @@ color catppuccin_macchiato
 " Settings
 set number
 set relativenumber
+
 filetype plugin indent on
 
 " Indentation
