@@ -1,0 +1,1 @@
+au Filetype * setlocal autoindent
