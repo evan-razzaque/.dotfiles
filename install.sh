@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Don't install .ignore/
+shopt -u dotglob
+
 cd $(dirname $0)
 
 # Add git config option without duplicate values

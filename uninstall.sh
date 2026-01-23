@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Don't unlink .ignore/
+shopt -u dotglob
+
 cd $(dirname $0)
 
 # Remove git config option with a specific value
