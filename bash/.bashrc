@@ -40,7 +40,7 @@ then
 		read TMUX_PANE_COUNT < <(tmux list-panes 2> /dev/null | wc -l)
 	fi
 
-	if [[ -z $TERM_PROGRAM \
+	if [[ -z "$TERMINAL_EMULATOR" ]] && [[ -z "$TERM_PROGRAM" \
 		|| "$TMUX_WINDOW_COUNT" == "1" && "$TMUX_PANE_COUNT" == "1" ]]; then
 		fastfetch
 	fi
