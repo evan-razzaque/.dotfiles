@@ -1,14 +1,9 @@
 #!/usr/bin/env bash
 
-# File must be specified with -o as the last argument
 log-msg() {
-	local log_file=$(grep -Po "(?<=-o ).+$" <<< "$@")
-	[[ -z "$log_file" ]] && return 0
+	[[ -z "$LOG_FILE" ]] && return 0
 
-	ARGS=("$@")
-	ARGS=("${ARGS[@]:0:$(($# - 2))}")
-
-	echo -e "($(echo $$)) [$(date +'%F %r')] $ARGS" >> "$log_file"
+	echo -e "($(echo $$)) [$(date +'%F %r')] $@" >> "$LOG_FILE"
 }
 
 tmux-get-pane-id() {
@@ -28,32 +23,40 @@ tmux-set-ssh-pane-pid() {
 }
 
 # If the pane is ssh, output the ssh command. Otherwise, output nothing.
-get-ssh-pane-cmd() {
-	local pane_pid=$(tmux display-message -p "#{pane_pid}")
+tmux-get-pane-cmd() {
+	local pane_id="$1"
+	local pane_pid=
+
+	if [[ -n "$pane_id" ]]; then
+		pane_id="-t $1"
+	fi
+
+	pane_pid=$(tmux display-message $pane_id -p "#{pane_pid}")
+	[[ -z "$pane_pid" ]] && return 0
 
 	ps -o command= -g $pane_pid | grep -P '^ssh' | sed -E 's/ -t .*bash//'
 }
 
-# Unsets ssh pids belonging to panes that were closed
-tmux-clean-ssh-pane-pids() {
-	local pane_ids=
+# Unsets ssh pids belonging to pane ids that don't have active ssh sessions
+clean-ssh-pane-pids() {
+	local active_pane_ids=
 	local ssh_pid_pane_ids=
-	local closed_panes=
+	local pane_ids=
 
-	pane_ids="$(tmux list-panes | tr ' ' '\n' | grep -Po '%\d+(?> \(active\))?$' | \
-		awk '{print $1}' | tr '\n' '|')"
+	active_pane_ids="$(tmux list-panes | grep -Po '%\d+')"
 
 	ssh_pid_pane_ids="$(tmux show-env | tr ' ' '\n' | cut -d '=' -f 1 | \
-		grep -o '%.*')"
+		grep -Po '(?<=SSH_PID_)%\d+')"
 
-	closed_panes=($(printf '%s' "$ssh_pid_pane_ids" | sed -E "s/$pane_ids//g"))
+	pane_ids=$(tr ' ' '\n' <<< "$active_pane_ids $ssh_pid_pane_ids" | sort -u | tr '\n' ' ')
 
-	log-msg "$pane_ids" -o $SSH_SPLIT_LOG_FILE
-	log-msg "${closed_panes[@]}" -o $SSH_SPLIT_LOG_FILE
+	for id in $pane_ids; do
+		local cmd=$(tmux-get-pane-cmd $id);
 
-	for id in "${closed_panes[@]}"; do
-		log-msg "Unsetting pane $id" -o $SSH_SPLIT_LOG_FILE
-		tmux set-environment -u SSH_PID_$id
+		if [[ -z "$cmd" ]] || ! grep ssh <<< "$cmd" &> /dev/null; then
+			log-msg "Unsetting SSH_PID_$id"
+			tmux set-environment -u SSH_PID_$id
+		fi
 	done
 }
 
@@ -65,7 +68,7 @@ set-pane-pids() {
 	local pane_id="$3"
 	local identifier="$4"
 
-	log-msg "PANE_ID=$pane_id, OLD_TARGET_ID=$prev_pane_id, identifier=$identifier" -o $SSH_SPLIT_LOG_FILE
+	log-msg "pane_id=$pane_id, prev_pane_id=$prev_pane_id, identifier=$identifier"
 
 	local pids=()
 	local pid_items=
@@ -73,7 +76,7 @@ set-pane-pids() {
 	while [[ -z "$pid_items" ]] && \
 		tmux list-panes | grep -E "$pane_id(\$| )" &> /dev/null
 	do
-		log-msg "[$$] $pane_id: searching..." -o $SSH_SPLIT_LOG_FILE
+		log-msg "[$$] $pane_id: searching for $identifier"
 		pid_items=$(tmux capture-pane -p -t $pane_id | grep -Po "(?<=$identifier: ).*")
 		sleep 0.1
 	done
@@ -88,11 +91,14 @@ set-pane-pids() {
 	fi
 }
 
-split-ssh-pane() {
-	#export SSH_SPLIT_LOG_FILE=~/ssh_pane_log.txt
+tmux-ssh-split() {
+	local split_cmd="$1"
+	local direction="$2"
+	local ssh_cmd="$3"
 
-	local direction="$1"
-	local ssh_cmd="$2"
+	if [[ "$split_cmd" == "new-window" ]]; then
+		direction=""
+	fi
 
 	local ssh_pid="$(tmux-get-ssh-pane-pid $(tmux-get-pane-id))"
 	if [[ -z "$ssh_pid" ]]; then
@@ -105,29 +111,31 @@ split-ssh-pane() {
 	# Prevent collision with other outputs (eg. ssh login banner)
 	local identifier="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1)"
 
-	log-msg $ssh_cmd -o $SSH_SPLIT_LOG_FILE
+	log-msg $ssh_cmd
 
 	# Outputs pid of newly split ssh session and the first ssh pid.
 	# The first ssh pid is used to set the pid of first ssh pane.
 	# See 'set-pane-pids' for more details.
-	pane_id=$(tmux split-window -PF "#{pane_id}" -c "#{pane_current_path}" $direction "$ssh_cmd -t '\
+	pane_id=$(tmux $split_cmd -PF "#{pane_id}" -c "#{pane_current_path}" $direction "$ssh_cmd -t '\
 		PREV_PID=\$(pgrep -u \$USER \$(basename \$SHELL) | head -n 1); \
 		cd -P /proc/$ssh_pid/cwd; \
 		echo -e \"$identifier: \$\$ \$PREV_PID\"; \
 		exec bash'; bash")
 
-	log-msg "PANE_ID=$pane_id, PREV_PANE_ID=$prev_pane_id, ssh_cmd: $ssh_cmd" -o $SSH_SPLIT_LOG_FILE
-
 	set-pane-pids "$ssh_pid" "$prev_pane_id" "$pane_id" "$identifier"
 }
 
-DIRECTION="$1"
-SSH_CMD="$(get-ssh-pane-cmd)"
+unset LOG_FILE
+#LOG_FILE=~/ssh_pane_log.txt
+
+SPLIT_CMD="$1"
+DIRECTION="$2"
+SSH_CMD="$(tmux-get-pane-cmd)"
 
 if [[ -z "$SSH_CMD" ]]; then
-	exec tmux split-window -c "#{pane_current_path}" $DIRECTION
+	exec tmux $SPLIT_CMD -c "#{pane_current_path}" $DIRECTION
 	exit
 fi
 
-tmux-clean-ssh-pane-pids
-split-ssh-pane "$DIRECTION" "$SSH_CMD"
+tmux-ssh-split "$SPLIT_CMD" "$DIRECTION" "$SSH_CMD"
+clean-ssh-pane-pids
