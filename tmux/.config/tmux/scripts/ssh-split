@@ -110,12 +110,11 @@ split-ssh-pane() {
 	# Outputs pid of newly split ssh session and the first ssh pid.
 	# The first ssh pid is used to set the pid of first ssh pane.
 	# See 'set-pane-pids' for more details.
-	pane_id=$(tmux split-window -PF "#{pane_id}" $direction $ssh_cmd -t "\
-		PROCS=\"\$(ps u)\"; \
-		PREV_PID=\$(echo -e \"\$PROCS\" | head -n 2 | tail -n 1 | awk '{print \$2}'); \
+	pane_id=$(tmux split-window -PF "#{pane_id}" -c "#{pane_current_path}" $direction "$ssh_cmd -t '\
+		PREV_PID=\$(pgrep -u \$USER \$(basename \$SHELL) | head -n 1); \
 		cd -P /proc/$ssh_pid/cwd; \
-		echo $identifier: \$\$ \$PREV_PID; \
-		exec bash")
+		echo -e \"$identifier: \$\$ \$PREV_PID\"; \
+		exec bash'; bash")
 
 	log-msg "PANE_ID=$pane_id, PREV_PANE_ID=$prev_pane_id, ssh_cmd: $ssh_cmd" -o $SSH_SPLIT_LOG_FILE
 
