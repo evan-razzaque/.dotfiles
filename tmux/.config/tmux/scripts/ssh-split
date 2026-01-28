@@ -3,7 +3,7 @@
 log-msg() {
 	[[ -z "$LOG_FILE" ]] && return 0
 
-	echo -e "($(echo $$)) [$(date +'%F %r')] $@" >> "$LOG_FILE"
+	echo -e "($$) [$(date +'%F %r')] $@" >> "$LOG_FILE"
 }
 
 tmux-get-pane-id() {
@@ -44,7 +44,7 @@ tmux-get-pane-cmd() {
 	pane_pid=$(tmux-get-pane-pid)
 	[[ -z "$pane_pid" ]] && return 0
 
-	ps -o command= -g $pane_pid | grep -P '^ssh' | sed -E 's/ -t .*bash//'
+	ps -o command= -g $pane_pid | grep -P '^ssh' | sed -E "s| -t .*\\\$SHELL||"
 }
 
 # set-pane-pids $prev_ssh_pid $prev_pane_id $pane_id $identifier
@@ -62,13 +62,16 @@ set-pane-pids() {
 	local pids=()
 	local pid_items=
 
+	log-msg "[$$] $pane_id: searching for $identifier"
+
 	while [[ -z "$pid_items" ]] && \
 		tmux list-panes | grep -E "$pane_id(\$| )" &> /dev/null
 	do
-		log-msg "[$$] $pane_id: searching for $identifier"
 		pid_items=$(tmux capture-pane -p -t $pane_id | grep -Po "(?<=$identifier: ).*")
 		sleep 0.1
 	done
+
+	log-msg "[$$] $pane_id: found $identifier"
 
 	pids=($pid_items)
 
@@ -113,22 +116,25 @@ tmux-ssh-split() {
 		PREV_PID=\$(pgrep -u \$USER \$(basename \$SHELL) | head -n 1); \
 		cd -P /proc/$prev_ssh_pid/cwd 2> /dev/null; \
 		echo -e \"$identifier: \$\$ \$PREV_PID\"; \
-		exec bash'; \
+		exec \$SHELL'; \
 		\
-		tmux set-option -qup @tmux-ssh-split_pid; bash")
+		tmux set-option -qup @tmux-ssh-split_pid; $SHELL")
 
 	set-pane-pids "$prev_ssh_pid" "$prev_pane_id" "$pane_id" "$identifier"
 }
 
 unset LOG_FILE
-#LOG_FILE=~/ssh_pane_log.txt
+#LOG_FILE=/tmp/ssh_pane_log.txt
 
 SPLIT_CMD="$1"
 DIRECTION="$2"
 SSH_CMD="$(tmux-get-pane-cmd)"
 
+log-msg "ssh_cmd: $SSH_CMD, split_cmd: $SPLIT_CMD, direction: $DIRECTION"
+
 case $SPLIT_CMD in
 	split-pane | split-window | new-window)
+
 		if [[ -z "$SSH_CMD" ]]; then
 			exec tmux $SPLIT_CMD -c "#{pane_current_path}" $DIRECTION
 			exit
