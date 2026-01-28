@@ -10,16 +10,26 @@ tmux-get-pane-id() {
 	tmux display-message -p "#{pane_id}"
 }
 
+tmux-get-pane-pid() {
+	tmux display-message $pane_id -p "#{pane_pid}"
+}
+
 tmux-get-ssh-pane-pid() {
 	local target_id=$1
-	tmux show-environment SSH_PID_$target_id 2> /dev/null | grep -Po '(?<==).+'
+	tmux show-options -qpt $target_id @tmux-ssh-split_pid | cut -d ' ' -f 2-
 }
 
 tmux-set-ssh-pane-pid() {
 	local target_id=$1
 	local pid=$2
 
-	tmux set-environment SSH_PID_$target_id $pid
+	tmux set-option -pt $target_id @tmux-ssh-split_pid $pid
+}
+
+tmux-unset-ssh-pane-pid() {
+	local target_id=$1
+
+	tmux set-option -qupt $target_id @tmux-ssh-split_pid
 }
 
 # If the pane is ssh, output the ssh command. Otherwise, output nothing.
@@ -31,39 +41,18 @@ tmux-get-pane-cmd() {
 		pane_id="-t $1"
 	fi
 
-	pane_pid=$(tmux display-message $pane_id -p "#{pane_pid}")
+	pane_pid=$(tmux-get-pane-pid)
 	[[ -z "$pane_pid" ]] && return 0
 
 	ps -o command= -g $pane_pid | grep -P '^ssh' | sed -E 's/ -t .*bash//'
 }
 
-# Unsets ssh pids belonging to pane ids that don't have active ssh sessions
-clean-ssh-pane-pids() {
-	local active_pane_ids=
-	local ssh_pid_pane_ids=
-	local pane_ids=
-
-	active_pane_ids="$(tmux list-panes | grep -Po '%\d+')"
-
-	ssh_pid_pane_ids="$(tmux show-env | tr ' ' '\n' | cut -d '=' -f 1 | \
-		grep -Po '(?<=SSH_PID_)%\d+')"
-
-	pane_ids=$(tr ' ' '\n' <<< "$active_pane_ids $ssh_pid_pane_ids" | sort -u | tr '\n' ' ')
-
-	for id in $pane_ids; do
-		local cmd=$(tmux-get-pane-cmd $id);
-
-		if [[ -z "$cmd" ]] || ! grep ssh <<< "$cmd" &> /dev/null; then
-			log-msg "Unsetting SSH_PID_$id"
-			tmux set-environment -u SSH_PID_$id
-		fi
-	done
-}
-
+# set-pane-pids $prev_ssh_pid $prev_pane_id $pane_id $identifier
+#
 # Sets the ssh pid for the newly spawned pane.
 # Sets the previous pane's ssh pid if none was set (typically the first ssh session).
 set-pane-pids() {
-	local ssh_pid="$1"
+	local prev_ssh_pid="$1"
 	local prev_pane_id="$2"
 	local pane_id="$3"
 	local identifier="$4"
@@ -85,8 +74,8 @@ set-pane-pids() {
 
 	tmux-set-ssh-pane-pid $pane_id ${pids[0]}
 
-	# When the ssh pane doesn't have a pid set
-	if [[ "$ssh_pid" == "\$PREV_PID" ]]; then
+	# When the previous ssh pane doesn't have a pid set
+	if [[ "$prev_ssh_pid" == "\$PREV_PID" ]]; then
 		tmux-set-ssh-pane-pid $prev_pane_id ${pids[1]}
 	fi
 }
@@ -96,13 +85,17 @@ tmux-ssh-split() {
 	local direction="$2"
 	local ssh_cmd="$3"
 
-	if [[ "$split_cmd" == "new-window" ]]; then
-		direction=""
-	fi
+	case $split_cmd in
+		split-pane | split-window)
+			;;
+		new-window)
+			direction=""
+			;;
+	esac
 
-	local ssh_pid="$(tmux-get-ssh-pane-pid $(tmux-get-pane-id))"
-	if [[ -z "$ssh_pid" ]]; then
-		ssh_pid="\$PREV_PID"
+	local prev_ssh_pid="$(tmux-get-ssh-pane-pid $(tmux-get-pane-id))"
+	if [[ -z "$prev_ssh_pid" ]]; then
+		prev_ssh_pid="\$PREV_PID"
 	fi
 
 	local prev_pane_id=$(tmux-get-pane-id)
@@ -118,11 +111,13 @@ tmux-ssh-split() {
 	# See 'set-pane-pids' for more details.
 	pane_id=$(tmux $split_cmd -PF "#{pane_id}" -c "#{pane_current_path}" $direction "$ssh_cmd -t '\
 		PREV_PID=\$(pgrep -u \$USER \$(basename \$SHELL) | head -n 1); \
-		cd -P /proc/$ssh_pid/cwd; \
+		cd -P /proc/$prev_ssh_pid/cwd 2> /dev/null; \
 		echo -e \"$identifier: \$\$ \$PREV_PID\"; \
-		exec bash'; bash")
+		exec bash'; \
+		\
+		tmux set-option -qup @tmux-ssh-split_pid; bash")
 
-	set-pane-pids "$ssh_pid" "$prev_pane_id" "$pane_id" "$identifier"
+	set-pane-pids "$prev_ssh_pid" "$prev_pane_id" "$pane_id" "$identifier"
 }
 
 unset LOG_FILE
@@ -132,10 +127,25 @@ SPLIT_CMD="$1"
 DIRECTION="$2"
 SSH_CMD="$(tmux-get-pane-cmd)"
 
-if [[ -z "$SSH_CMD" ]]; then
-	exec tmux $SPLIT_CMD -c "#{pane_current_path}" $DIRECTION
-	exit
-fi
+case $SPLIT_CMD in
+	split-pane | split-window | new-window)
+		if [[ -z "$SSH_CMD" ]]; then
+			exec tmux $SPLIT_CMD -c "#{pane_current_path}" $DIRECTION
+			exit
+		fi
 
-tmux-ssh-split "$SPLIT_CMD" "$DIRECTION" "$SSH_CMD"
-clean-ssh-pane-pids
+		tmux-ssh-split "$SPLIT_CMD" "$DIRECTION" "$SSH_CMD"
+		;;
+	respawn)
+		tmux respawn-pane -k
+		[[ -z "$SSH_CMD" ]] && exit 0;
+
+		INDENTIFIER=$(ps -o command= -g $(tmux-get-pane-pid) | grep -Po '\w+(?=:)' | head -n1)
+		set-pane-pids "-" "-" "$(tmux-get-pane-id)" "$INDENTIFIER"
+		exit 0
+		;;
+	*)
+		echo "Invalid split cmd" >&2
+		exit 2
+		;;
+esac
