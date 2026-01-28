@@ -26,12 +26,6 @@ tmux-set-ssh-pane-pid() {
 	tmux set-option -pt $target_id @tmux-ssh-split_pid $pid
 }
 
-tmux-unset-ssh-pane-pid() {
-	local target_id=$1
-
-	tmux set-option -qupt $target_id @tmux-ssh-split_pid
-}
-
 # If the pane is ssh, output the ssh command. Otherwise, output nothing.
 tmux-get-pane-cmd() {
 	local pane_id="$1"
@@ -62,7 +56,7 @@ set-pane-pids() {
 	local pids=()
 	local pid_items=
 
-	log-msg "[$$] $pane_id: searching for $identifier"
+	log-msg "pane $pane_id: searching for identifier $identifier"
 
 	while [[ -z "$pid_items" ]] && \
 		tmux list-panes | grep -E "$pane_id(\$| )" &> /dev/null
@@ -71,7 +65,15 @@ set-pane-pids() {
 		sleep 0.1
 	done
 
-	log-msg "[$$] $pane_id: found $identifier"
+	if [[ -z "$pid_items" ]]; then
+		log-msg "pane $pane_id: stopped searching for identifier (pane closed)"
+		return 0
+	fi
+
+	log-msg "pane $pane_id: found identifier $identifier"
+
+	# Clear ssh session output
+	tmux send-keys -t $pane_id "C-l"
 
 	pids=($pid_items)
 
@@ -107,10 +109,7 @@ tmux-ssh-split() {
 	# Prevent collision with other outputs (eg. ssh login banner)
 	local identifier="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1)"
 
-	log-msg $ssh_cmd
-
-	# Outputs pid of newly split ssh session and the first ssh pid.
-	# The first ssh pid is used to set the pid of first ssh pane.
+	# Outputs pid of newly split ssh session and the pid of the first ssh session.
 	# See 'set-pane-pids' for more details.
 	pane_id=$(tmux $split_cmd -PF "#{pane_id}" -c "#{pane_current_path}" $direction "$ssh_cmd -t '\
 		PREV_PID=\$(pgrep -u \$USER \$(basename \$SHELL) | head -n 1); \
@@ -130,15 +129,15 @@ SPLIT_CMD="$1"
 DIRECTION="$2"
 SSH_CMD="$(tmux-get-pane-cmd)"
 
-log-msg "ssh_cmd: $SSH_CMD, split_cmd: $SPLIT_CMD, direction: $DIRECTION"
 
 case $SPLIT_CMD in
 	split-pane | split-window | new-window)
-
 		if [[ -z "$SSH_CMD" ]]; then
 			exec tmux $SPLIT_CMD -c "#{pane_current_path}" $DIRECTION
 			exit
 		fi
+
+		log-msg "ssh_cmd: $SSH_CMD, split_cmd: $SPLIT_CMD, direction: $DIRECTION"
 
 		tmux-ssh-split "$SPLIT_CMD" "$DIRECTION" "$SSH_CMD"
 		;;
