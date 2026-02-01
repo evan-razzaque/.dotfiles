@@ -31,7 +31,6 @@ map <leader>r :source ~/.config/ideavim/ideavimrc<CR>
 
 " Clipboard
 vnoremap <C-y> "+y
-noremap <C-S-V> "+p
 
 " IDE actions
 map <leader>rn <Action>(RenameElement)
