@@ -57,3 +57,8 @@ fi
 if [ -f ~/.bash_functions ]; then
 	source ~/.bash_functions
 fi
+
+# User-defined config
+if [ -f ~/.bashrc_user ]; then
+	source ~/.bashrc_user
+fi
