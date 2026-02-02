@@ -34,5 +34,5 @@ vnoremap <C-y> "+y
 
 " IDE actions
 map <leader>rn <Action>(RenameElement)
-map <leader>e <Action>(ShowHoverInfo)
+map <leader>e <Action>(ShowErrorDescription)
 map <leader>b <Action>(ToggleLineBreakpoint)
