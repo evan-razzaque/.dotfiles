@@ -5,7 +5,12 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-PS1='[\u@\h \W]\$ '
+PS1_STRING='[\u@\h \W]\$ '
+
+# Retain python venv prompt
+if [[ ! "$PS1" =~ "$PS1_STRING" ]]; then
+	PS1="$PS1_STRING"
+fi
 
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
