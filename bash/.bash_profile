@@ -32,5 +32,6 @@ fi
 
 unset -f append-paths
 
+[[ -f ~/.bash_profile_user ]] && . ~/.bash_profile_user
 [[ -f ~/.bashrc ]] && . ~/.bashrc
 
