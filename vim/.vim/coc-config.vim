@@ -1,3 +1,23 @@
+" Extensions
+let g:coc_global_extensions = [
+	\ 'coc-json',
+	\ 'coc-pairs',
+	\ 'coc-tsserver',
+	\ 'coc-html',
+	\ 'coc-css',
+	\ 'coc-emmet',
+	\ 'coc-clangd',
+	\ 'coc-java',
+	\ '@yaegassy/coc-intelephense',
+	\ '@yaegassy/coc-laravel',
+	\ 'coc-pyright',
+	\ 'coc-vimlsp',
+	\ 'coc-sh',
+	\ 'coc-webview',
+	\ 'coc-markdown-preview-enhanced',
+	\ '@yaegassy/coc-marksman',
+\]
+
 " Use <c-space> to trigger completion
 if has('nvim')
   inoremap <silent><expr> <c-space> coc#refresh()
