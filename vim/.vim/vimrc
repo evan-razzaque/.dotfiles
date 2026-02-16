@@ -20,6 +20,7 @@ Plug 'maxmellon/vim-jsx-pretty'
 Plug 'vim-scripts/DoxygenToolkit.vim'
 Plug 'devsjc/vim-jb'
 Plug 'tpope/vim-commentary'
+Plug 'ryvnf/readline.vim'
 
 if (executable("ag"))
 	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -29,6 +30,11 @@ endif
 if (executable("node"))
 	Plug 'neoclide/coc.nvim', {'branch': 'release'}
 	source ~/.vim/coc-config.vim
+endif
+
+if (executable("tmux"))
+	Plug 'christoomey/vim-tmux-navigator'
+	source ~/.vim/vim-tmux-config.vim
 endif
 
 call plug#end()
