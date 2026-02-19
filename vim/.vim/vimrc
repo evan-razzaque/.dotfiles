@@ -93,7 +93,7 @@ noremap <silent> \rs :let v = winsaveview()<CR>
 
 function s:source(file)
 	if !empty(glob(a:file))
-			exec "source " . a:file
+		exec "source " . a:file
 	endif
 endfunction
 
