@@ -84,7 +84,12 @@ noremap <leader>i <C-a>
 
 vnoremap <C-y> "+y| " Copy to system clipboard
 noremap ; :
-noremap \rs :%s/\v\s+$//g<CR>g`'| " Remove trailing whitespace
+
+" Remove trailing whitespace
+noremap <silent> \rs :let v = winsaveview()<CR>
+			\:%s/\v\s+$//g<CR>
+			\:call winrestview(v)<CR>
+			\:unlet v<CR>
 
 function s:source(file)
 	if !empty(glob(a:file))
