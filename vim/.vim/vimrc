@@ -1,6 +1,12 @@
 unlet! skip_defaults_vim
 source $VIMRUNTIME/defaults.vim
 
+function s:source(file)
+	if !empty(glob(a:file))
+		exec "source " . a:file
+	endif
+endfunction
+
 let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
 if empty(glob(data_dir . '/autoload/plug.vim'))
 	silent execute '!mkdir -p ' .data_dir.'/autoload/'
@@ -29,13 +35,16 @@ endif
 
 if (executable("node"))
 	Plug 'neoclide/coc.nvim', {'branch': 'release'}
-	source ~/.vim/coc-config.vim
+	call s:source("~/.vim/coc-config.vim")
 endif
 
 if (executable("tmux"))
 	Plug 'christoomey/vim-tmux-navigator'
-	source ~/.vim/vim-tmux-config.vim
+	call s:source("~/.vim/vim-tmux-config.vim")
 endif
+
+" Additional plugins
+call s:source("~/.vim/vim-plug-user.vim")
 
 call plug#end()
 
@@ -91,10 +100,5 @@ noremap <silent> \rs :let v = winsaveview()<CR>
 			\:call winrestview(v)<CR>
 			\:unlet v<CR>
 
-function s:source(file)
-	if !empty(glob(a:file))
-		exec "source " . a:file
-	endif
-endfunction
 
 call s:source("~/.vim/functions.vim")
