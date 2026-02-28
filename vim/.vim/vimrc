@@ -49,9 +49,6 @@ call s:source("~/.vim/vim-plug-user.vim")
 
 call plug#end()
 
-autocmd BufNewFile,BufRead *.tsx setlocal filetype=typescriptreact
-autocmd BufNewFile,BufRead *.jsx setlocal filetype=javascriptreact
-
 function! s:set_readonly()
 	if (&readonly)
 		set nomodifiable
@@ -59,8 +56,6 @@ function! s:set_readonly()
 		set modifiable
 	endif
 endfunction
-
-autocmd	BufWinEnter * call s:set_readonly()
 
 " Variables
 let g:filetype_h = "c"
@@ -94,12 +89,21 @@ noremap <leader>i <C-a>
 
 vnoremap <C-y> "+y| " Copy to system clipboard
 noremap ; :
+noremap <silent> \rs :call <SID>strip_trailing_whitespace()<CR>
 
 " Remove trailing whitespace
-noremap <silent> \rs :let v = winsaveview()<CR>
-			\:%s/\v\s+$//g<CR>
-			\:call winrestview(v)<CR>
-			\:unlet v<CR>
+function! s:strip_trailing_whitespace()
+	let v = winsaveview()
+	silent! execute(':%s/\v\s+$//g')
+	call winrestview(l:v)
+endfunction
 
+" Autocommands
+autocmd BufNewFile,BufRead *.tsx setlocal filetype=typescriptreact
+autocmd BufNewFile,BufRead *.jsx setlocal filetype=javascriptreact
+autocmd	BufWinEnter * call s:set_readonly()
+
+" Use :noa w[q] to write without stripping trailing whitespace
+autocmd BufWrite * call s:strip_trailing_whitespace()
 
 call s:source("~/.vim/functions.vim")
