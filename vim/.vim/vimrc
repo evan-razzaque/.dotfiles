@@ -35,6 +35,7 @@ endif
 
 if (executable("node"))
 	Plug 'neoclide/coc.nvim', {'branch': 'release'}
+	Plug 'jwalton512/vim-blade'
 	call s:source("~/.vim/coc-config.vim")
 endif
 

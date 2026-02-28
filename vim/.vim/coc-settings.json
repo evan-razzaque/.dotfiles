@@ -16,6 +16,7 @@
 	"typescript.autoClosingTags": false,
 	"typescript.suggest.completeFunctionCalls": false,
 	"typescript.suggest.autoImports": false,
+	"emmet.includeLanguages": {"blade": "html"},
 
 	"[sh]": {
 		"suggest.enableFloat": false

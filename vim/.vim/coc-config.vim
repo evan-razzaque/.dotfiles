@@ -10,6 +10,7 @@ let g:coc_global_extensions = [
 	\ 'coc-java',
 	\ '@yaegassy/coc-intelephense',
 	\ '@yaegassy/coc-laravel',
+	\ 'coc-blade',
 	\ 'coc-pyright',
 	\ 'coc-vimlsp',
 	\ 'coc-sh',
