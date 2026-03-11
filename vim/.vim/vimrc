@@ -87,7 +87,10 @@ set t_vb=
 noremap <C-a> <Nop>| " Fix tmux prefix key conflict
 noremap <leader>i <C-a>
 
-vnoremap <C-y> "+y| " Copy to system clipboard
+" Copy and paste from system clipboard
+vnoremap <C-y> "+y
+nnoremap <C-p> "+p
+
 noremap ; :
 noremap <silent> \rs :call <SID>strip_trailing_whitespace()<CR>
 
