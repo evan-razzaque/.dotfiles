@@ -89,7 +89,7 @@ noremap <leader>i <C-a>
 
 " Copy and paste from system clipboard
 vnoremap <C-y> "+y
-nnoremap <C-p> "+p
+noremap <C-p> "+p
 
 noremap ; :
 noremap <silent> \rs :call <SID>strip_trailing_whitespace()<CR>
