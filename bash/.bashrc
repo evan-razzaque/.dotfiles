@@ -12,22 +12,6 @@ if [[ ! "$PS1" =~ "$PS1_STRING" ]]; then
 	PS1="$PS1_STRING"
 fi
 
-alias ls='ls --color=auto'
-alias grep='grep --color=auto'
-alias ip='ip --color'
-
-alias la='ls -A'
-alias lr='ls -R'
-alias ll='ls -Alh'
-
-alias clipboard='xsel -b'
-alias du='du --exclude /proc'
-alias open='xdg-open'
-
-alias compiledb='compiledb --command-style'
-
-alias tmux-new='tmux new -s "#{server_sessions}"'
-
 # Ubuntu being Ubuntu
 unset command_not_found_handle
 
@@ -53,17 +37,19 @@ fi
 
 unset FASTFETCH
 
-# User-defined aliases
-if [ -f ~/.bash_aliases ]; then
-	source ~/.bash_aliases
-fi
+source() {
+	local file="$1"
+
+	[[ -f "$file" ]] && builtin source "$file"
+}
+
+# Aliases
+source ~/.bash_aliases
 
 # Shell functions
-if [ -f ~/.bash_functions ]; then
-	source ~/.bash_functions
-fi
+source ~/.bash_functions
 
 # User-defined config
-if [ -f ~/.bashrc_user ]; then
-	source ~/.bashrc_user
-fi
+source ~/.bashrc_user
+
+unset -f source
