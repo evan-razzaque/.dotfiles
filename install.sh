@@ -5,6 +5,9 @@ shopt -u dotglob
 
 cd $(dirname $0)
 
+# Save untracked changes
+git stash &>/dev/null
+
 # Add git config option without duplicate values
 git-set-config() {
 	local option=$1
@@ -25,3 +28,6 @@ stow -R --adopt --no-folding -v */ 2>&1 | ./filter-stow-output.sh
 git restore .
 
 git clean -fd .ignore
+
+# Restore untracked changes
+git stash pop &>/dev/null
