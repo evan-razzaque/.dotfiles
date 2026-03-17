@@ -8,7 +8,7 @@
 	"pairs.disableLanguages": [
 		"sh"
 	],
-	"pairs.requireEOLCharacters": ["(", "<"],
+	"pairs.requireEOLCharacters": ["(", "<", "\"", "'"],
 	"java.completion.guessMethodArguments": "off",
 	"javascript.autoClosingTags": false,
 	"javascript.suggest.completeFunctionCalls": false,
