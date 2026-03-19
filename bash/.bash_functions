@@ -5,8 +5,9 @@
 #
 
 mkcd() {
-	mkdir -p $@
-	cd ${@:$#}
+	[[ $# > 1 ]] && { echo "$FUNCNAME: too many arguments"; return 1; }
+	mkdir -p $1 || return $?
+	cd $1 || return $?
 }
 
 # OSC 3008 escaping without external process. ~25x faster than sed equivalent.
