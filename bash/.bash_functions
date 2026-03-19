@@ -45,6 +45,9 @@ source-venv() {
 	[[ -z "$venv" ]] && { source; return $?; }
 
 	export() {
+		# Don't export empty variables
+		[[ -z "${!1}" ]] && return
+
 		builtin export "$@"
 		if [[ -n "$TMUX" ]]; then
 			tmux setenv "$1" "${!1}"
@@ -89,6 +92,8 @@ deactivate-venv() {
 
 	eval "$(tmux show -v @venv-deactivate)"
 	deactivate
+
+	tmux set -u @venv-deactivate
 
 	builtin unset -f export unset
 }
