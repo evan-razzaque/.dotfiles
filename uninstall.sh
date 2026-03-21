@@ -8,6 +8,9 @@ shopt -u dotglob
 
 cd $(dirname $0)
 
+# Save untracked changes
+git stash &>/dev/null
+
 # Remove git config option with a specific value
 git-unset-config() {
 	local option=$1
@@ -24,3 +27,6 @@ stow -D --adopt --no-folding -v "${PACKAGES[@]}" 2>&1
 git restore .
 
 git clean -fd .ignore
+
+# Restore untracked changes
+git stash pop &>/dev/null
