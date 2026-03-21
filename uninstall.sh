@@ -15,7 +15,7 @@ git stash &>/dev/null
 git-unset-config() {
 	local option=$1
 	local value=$2
-	git config unset --global --value $value --all $option $value
+	git config unset --global --value $value --all $option
 }
 
 git-unset-config include.path .gitconfig-extra
