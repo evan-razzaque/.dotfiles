@@ -8,7 +8,6 @@ shopt -u dotglob
 
 cd $(dirname $0)
 
-# Save untracked changes
 git stash &>/dev/null
 
 # Add git config option without duplicate values
@@ -30,8 +29,6 @@ stow -R --adopt --no-folding -v "${PACKAGES[@]}" 2>&1 | ./filter-stow-output.sh
 
 # Restore changes from stow and any files ignored during installation
 git restore .
-
 git clean -fd .ignore
 
-# Restore untracked changes
 git stash pop &>/dev/null
