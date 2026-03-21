@@ -18,8 +18,10 @@ git-unset-config() {
 	git config unset --global --value $value --all $option
 }
 
-git-unset-config include.path .gitconfig-extra
-git-unset-config include.path .gitconfig-credential
+if [[ "${PACKAGES[*]}" =~ "git" ]]; then
+	git-unset-config include.path .gitconfig-extra
+	git-unset-config include.path .gitconfig-credential
+fi
 
 stow -D --adopt --no-folding -v "${PACKAGES[@]}" 2>&1
 

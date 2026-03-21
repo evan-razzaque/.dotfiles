@@ -18,11 +18,12 @@ git-set-config() {
 	git config set --global --value $value --all $option $value
 }
 
-git-set-config include.path .gitconfig-extra
+if [[ "${PACKAGES[*]}" =~ "git" ]]; then
+	git-set-config include.path .gitconfig-extra
 
-# Check if user has github-cli for git credential helper
-if command -v gh > /dev/null; then
-	git-set-config include.path .gitconfig-credential
+	if command -v gh > /dev/null; then
+		git-set-config include.path .gitconfig-credential
+	fi
 fi
 
 stow -R --adopt --no-folding -v "${PACKAGES[@]}" 2>&1 | ./filter-stow-output.sh
