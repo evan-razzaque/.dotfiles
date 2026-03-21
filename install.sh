@@ -1,5 +1,8 @@
 #!/bin/bash
 
+PACKAGES=(*/)
+PACKAGES=("${@:-${PACKAGES[@]}}")
+
 # Don't install .ignore/
 shopt -u dotglob
 
@@ -22,7 +25,7 @@ if command -v gh > /dev/null; then
 	git-set-config include.path .gitconfig-credential
 fi
 
-stow -R --adopt --no-folding -v */ 2>&1 | ./filter-stow-output.sh
+stow -R --adopt --no-folding -v "${PACKAGES[@]}" 2>&1 | ./filter-stow-output.sh
 
 # Restore changes from stow and any files ignored during installation
 git restore .

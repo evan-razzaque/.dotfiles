@@ -1,5 +1,8 @@
 #!/bin/bash
 
+PACKAGES=(*/)
+PACKAGES=("${@:-${PACKAGES[@]}}")
+
 # Don't unlink .ignore/
 shopt -u dotglob
 
@@ -15,7 +18,7 @@ git-unset-config() {
 git-unset-config include.path .gitconfig-extra
 git-unset-config include.path .gitconfig-credential
 
-stow -D --adopt --no-folding -v */ 2>&1
+stow -D --adopt --no-folding -v "${PACKAGES[@]}" 2>&1
 
 # Restore changes from stow and any files ignored during uninstallation
 git restore .
