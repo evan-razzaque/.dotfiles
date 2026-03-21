@@ -7,7 +7,7 @@ function s:source(file)
 	endif
 endfunction
 
-let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+let data_dir = has('nvim') ? stdpath('data') . '/site' : $MYVIMDIR
 if empty(glob(data_dir . '/autoload/plug.vim'))
 	silent execute '!mkdir -p ' .data_dir.'/autoload/'
 	silent execute '!wget -O '.data_dir.'/autoload/plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
@@ -36,16 +36,16 @@ endif
 if (executable("node"))
 	Plug 'neoclide/coc.nvim', {'branch': 'release'}
 	Plug 'jwalton512/vim-blade'
-	call s:source("~/.vim/coc-config.vim")
+	call s:source($MYVIMDIR . "coc-config.vim")
 endif
 
 if (executable("tmux"))
 	Plug 'christoomey/vim-tmux-navigator'
-	call s:source("~/.vim/vim-tmux-config.vim")
+	call s:source($MYVIMDIR . "vim-tmux-config.vim")
 endif
 
 " Additional plugins
-call s:source("~/.vim/vim-plug-user.vim")
+call s:source($MYVIMDIR . "vim-plug-user.vim")
 
 call plug#end()
 
@@ -112,4 +112,4 @@ augroup Autocommands
 	autocmd BufWrite * call s:strip_trailing_whitespace()
 augroup END
 
-call s:source("~/.vim/functions.vim")
+call s:source($MYVIMDIR . "functions.vim")
