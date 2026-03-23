@@ -1,19 +1,47 @@
-function! s:get_tmux_pane_id()
-	return system("tmux display-message -p '#{pane_id}'")
+function! s:tmux_get_pane_id()
+	return substitute(
+				\system("tmux display-message -p '#{pane_id}'"), '\n', '', '')
+endfunction
+
+function! s:tmux_nav_set_vim_pid()
+	let s:tmux_pane_id = $TMUX_PANE
+	call system("tmux set -t " . s:tmux_pane_id . " -p @tmux-nav-vim " . getpid())
+
+	return ""
+endfunction
+
+function! s:tmux_nav_unset_vim_pid()
+	call system("tmux set -t " . s:tmux_pane_id . " -up @tmux-nav-vim")
+
+	return ""
 endfunction
 
 " Navigate to tmux pane in insert/command/visual mode
 function! s:tmux_nav(mode, direction)
-	let s:old_pane_id = s:get_tmux_pane_id()
 	silent! execute(":TmuxNavigate" . a:direction)
 
+	if empty($TMUX)
+		return ""
+	endif
+
 	" Go back to insert mode if navigating to different tmux pane
-	if a:mode == "i" && s:get_tmux_pane_id() != s:old_pane_id
+	if a:mode == "i" && s:tmux_get_pane_id() != s:tmux_pane_id
 		call feedkeys('a')
 	endif
 
 	return ""
 endfunction
+
+cnoreabbrev <expr> shell getcmdtype() == ":" && getcmdline() == 'shell'
+			\? <SID>tmux_nav_unset_vim_pid() . 'shell' : 'shell'
+
+if !empty($TMUX)
+	augroup TmuxNavigateSetPid
+		autocmd!
+		autocmd VimEnter,VimResume,ShellCmdPost * silent! call s:tmux_nav_set_vim_pid()
+		autocmd VimLeave,VimSuspend * silent! call s:tmux_nav_unset_vim_pid()
+	augroup END
+endif
 
 let g:tmux_navigator_no_mappings = 1
 
