@@ -25,7 +25,7 @@ if [[ "${PACKAGES[*]}" =~ "git" ]]; then
 	fi
 fi
 
-stow -R --adopt --no-folding -v "${PACKAGES[@]}" 2>&1 | ./filter-stow-output.sh
+./stow-cmd.sh -R "${PACKAGES[@]}"
 
 # Restore changes from stow and any files ignored during installation
 git restore .

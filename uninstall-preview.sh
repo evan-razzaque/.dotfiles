@@ -8,5 +8,5 @@ shopt -u dotglob
 
 cd $(dirname $0)
 
-stow -D --no-folding -nv "${PACKAGES[@]}" 2>&1 | ./filter-stow-output.sh
+./stow-cmd.sh -Dn "${PACKAGES[@]}"
 git clean -nd .ignore | sed 's|Would remove .ignore/|Not removing |g'

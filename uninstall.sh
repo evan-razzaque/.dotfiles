@@ -22,7 +22,7 @@ if [[ "${PACKAGES[*]}" =~ "git" ]]; then
 	git-unset-config include.path .gitconfig-credential
 fi
 
-stow -D --adopt --no-folding -v "${PACKAGES[@]}" 2>&1
+./stow-cmd.sh -D "${PACKAGES[@]}"
 
 # Restore changes from stow and any files ignored during uninstallation
 git restore .
