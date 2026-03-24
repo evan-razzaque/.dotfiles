@@ -1,14 +1,9 @@
 #!/bin/bash
 
-PACKAGES=(*/)
-PACKAGES=("${@:-${PACKAGES[@]}}")
-
-# Don't unlink .ignore/
-shopt -u dotglob
-
 cd $(dirname $0)
 
-git stash &>/dev/null
+declare -a PACKAGES
+source stow-cmd.sh "$@"
 
 # Remove git config option with a specific value
 git-unset-config() {
@@ -22,10 +17,4 @@ if [[ "${PACKAGES[*]}" =~ "git" ]]; then
 	git-unset-config include.path .gitconfig-credential
 fi
 
-./stow-cmd.sh -D "${PACKAGES[@]}"
-
-# Restore changes from stow and any files ignored during uninstallation
-git restore .
-git clean -fd .ignore
-
-git stash pop &>/dev/null
+stow-cmd -D

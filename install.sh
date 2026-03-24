@@ -1,14 +1,9 @@
 #!/bin/bash
 
-PACKAGES=(*/)
-PACKAGES=("${@:-${PACKAGES[@]}}")
-
-# Don't install .ignore/
-shopt -u dotglob
-
 cd $(dirname $0)
 
-git stash &>/dev/null
+declare -a PACKAGES
+source stow-cmd.sh "$@"
 
 # Add git config option without duplicate values
 git-set-config() {
@@ -25,10 +20,4 @@ if [[ "${PACKAGES[*]}" =~ "git" ]]; then
 	fi
 fi
 
-./stow-cmd.sh -R "${PACKAGES[@]}"
-
-# Restore changes from stow and any files ignored during installation
-git restore .
-git clean -fd .ignore
-
-git stash pop &>/dev/null
+stow-cmd -R
