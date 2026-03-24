@@ -28,15 +28,17 @@ _stow() {
 stow-cmd() {
 	local operation="$1"
 
-	git stash &>/dev/null
+	git add .
 
 	_stow "$operation"
 
-	# Restore changes from stow and any files ignored during installation
+	# Revert stow package adoption
 	git restore .
-	git clean -fd .ignore
 
-	git stash pop &>/dev/null
+	git restore --staged .
+	git ls-files --deleted | xargs git restore &>/dev/null
+
+	git clean -fd .ignore &>/dev/null
 }
 
 stow-cmd-preview() {
