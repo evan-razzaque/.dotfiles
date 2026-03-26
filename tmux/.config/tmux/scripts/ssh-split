@@ -3,7 +3,7 @@
 log-msg() {
 	[[ -z "$LOG_FILE" ]] && return 0
 
-	echo -e "($$) [$(date +'%F %r')] $@" >> "$LOG_FILE"
+	echo -e "($$) [$(date +'%F %r')] $*" >> "$LOG_FILE"
 }
 
 tmux-get-pane-id() {
@@ -28,12 +28,7 @@ tmux-set-ssh-pane-pid() {
 
 # If the pane is ssh, output the ssh command. Otherwise, output nothing.
 tmux-get-pane-cmd() {
-	local pane_id="$1"
-	local pane_pid=
-
-	if [[ -n "$pane_id" ]]; then
-		pane_id="-t $1"
-	fi
+	local pane_pid
 
 	pane_pid=$(tmux-get-pane-pid)
 	[[ -z "$pane_pid" ]] && return 0
