@@ -4,3 +4,5 @@ hi link CocSemTypeProperty Normal
 hi link CocSemTypeVariable Normal
 hi link CocSemTypeLabel Number
 hi link CocSemTypeClass Operator
+hi link CocSemTypeVariable NONE
+hi link CocSemTypeModVariableDefaultLibrary Number
