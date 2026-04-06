@@ -3,9 +3,6 @@
 PACKAGES=(*/)
 PACKAGES=("${@:-${PACKAGES[@]}}")
 
-# Don't install .ignore/
-shopt -u dotglob
-
 # Takes stow output from stdin, filters out packages that are restowed and
 # ignores package config adoption (since we use git restore).
 filter-stow-output() {
@@ -21,8 +18,7 @@ filter-stow-output() {
 _stow() {
 	local flags=("$@")
 
-	stow -t ~ --adopt --no-folding -v "${flags[@]}" "${PACKAGES[@]}" 2>&1 \
-		| filter-stow-output
+	stow "${flags[@]}" "${PACKAGES[@]}" 2>&1 | filter-stow-output
 }
 
 stow-cmd() {
