@@ -70,6 +70,7 @@ set termguicolors
 color catppuccin_macchiato
 
 " Settings
+set nomodeline
 set number
 set relativenumber
 
