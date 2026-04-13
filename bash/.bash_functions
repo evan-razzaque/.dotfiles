@@ -75,28 +75,32 @@ _tmux_export_unset() {
 # Activate python venv for a tmux session
 source-venv() {
 	local venv="${1:-.}"
+	local deactivate_func_body
 
 	_tmux_export_unset
 
+	read -rd '' deactivate_func_body <<- 'EOF'
+		# Deactivate python venv for a tmux session
+		deactivate-venv() {
+			_tmux_export_unset
+
+			eval "$(tmux show -v @venv-deactivate)"
+			deactivate
+
+			tmux set -u @venv-deactivate
+
+			builtin unset -f export unset deactivate-venv
+		}
+	EOF
+
 	if source "$venv/bin/activate"; then
 		tmux set @venv-deactivate "$(declare -f deactivate)"
+		eval "$deactivate_func_body"
 	fi
 
 	export _OLD_VIRTUAL_PATH
 	export _OLD_VIRTUAL_PYTHONHOME
 	export _OLD_VIRTUAL_PS1
-
-	builtin unset -f export unset
-}
-
-# Deactivate python venv for a tmux session
-deactivate-venv() {
-	_tmux_export_unset
-
-	eval "$(tmux show -v @venv-deactivate)"
-	deactivate
-
-	tmux set -u @venv-deactivate
 
 	builtin unset -f export unset
 }
