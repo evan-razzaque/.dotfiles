@@ -25,6 +25,27 @@ wherefunc() (
 	declare -F "$func_name"
 )
 
+# Rename a function
+renamefunc() {
+	local current_name="$1"
+	local new_name="$(tr -dc '[:alnum:]_-' <<< "$2")"
+
+	if [[ "$2" != "$new_name" ]]; then
+		echo "$0: '$2' is not a valid function name"
+		return 1
+	fi
+
+	if ! command -v "$current_name"; then
+		"$current_name"
+		return 2
+	fi
+
+	[[ -z "$new_name" ]] && return 1
+
+	eval "$new_name() $(declare -f "$current_name" | tail -n +2)"
+	unset -f "$current_name"
+}
+
 # Time a commnad with a desktop notification instead of outputting to stderr
 time-notify() {
 	if [[ ! -f /usr/bin/time ]]; then
@@ -57,12 +78,14 @@ _tmux_export_unset() {
 		# Don't export empty variables
 		[[ -z "${!1}" ]] && return
 
+		# shellcheck disable=SC2163
 		builtin export "${1?}"
 		if [[ -n "$TMUX" ]]; then
 			tmux setenv "$1" "${!1}"
 		fi
 	}
 
+	# shellcheck disable=SC2329
 	unset() {
 		builtin unset "$@"
 		if [[ -n "$TMUX" ]]; then
@@ -72,35 +95,35 @@ _tmux_export_unset() {
 	}
 }
 
+if [[ -n "$VIRTUAL_ENV" ]]; then
+	deactivate() {
+		_tmux_export_unset
+
+		eval "$(tmux show -v @venv-deactivate)"
+		_deactivate
+
+		tmux set -u @venv-deactivate
+
+		builtin unset -f export unset _deactivate deactivate
+	}
+fi
+
 # Activate python venv for a tmux session
 source-venv() {
 	local venv="${1:-.}"
-	local deactivate_func_body
 
 	_tmux_export_unset
 
-	read -rd '' deactivate_func_body <<- 'EOF'
-		# Deactivate python venv for a tmux session
-		deactivate-venv() {
-			_tmux_export_unset
-
-			eval "$(tmux show -v @venv-deactivate)"
-			deactivate
-
-			tmux set -u @venv-deactivate
-
-			builtin unset -f export unset deactivate-venv
-		}
-	EOF
-
 	if source "$venv/bin/activate"; then
-		tmux set @venv-deactivate "$(declare -f deactivate)"
-		eval "$deactivate_func_body"
+		renamefunc deactivate _deactivate
+		tmux set @venv-deactivate "$(declare -f _deactivate)"
+		source "${BASH_SOURCE[0]}"
+
+
+		export _OLD_VIRTUAL_PATH
+		export _OLD_VIRTUAL_PYTHONHOME
+		export _OLD_VIRTUAL_PS1
 	fi
 
-	export _OLD_VIRTUAL_PATH
-	export _OLD_VIRTUAL_PYTHONHOME
-	export _OLD_VIRTUAL_PS1
-
-	builtin unset -f export unset
+	builtin unset -f export unset _deactivate
 }
