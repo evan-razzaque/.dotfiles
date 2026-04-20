@@ -17,6 +17,7 @@ let g:coc_global_extensions = [
 	\ 'coc-webview',
 	\ 'coc-markdown-preview-enhanced',
 	\ '@yaegassy/coc-marksman',
+	\ 'coc-qml',
 \]
 
 " Use <c-space> to trigger completion

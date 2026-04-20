@@ -27,5 +27,12 @@
 
 	"[sh]": {
 		"suggest.enableFloat": false
+	},
+	"languageserver": {
+		"qml": {
+			"command": "qmlls6",
+			"filetypes": ["qml"]
+		}
 	}
+
 }
