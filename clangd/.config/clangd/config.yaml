@@ -1,5 +1,12 @@
+If:
+  PathMatch: [.*\.c]
 CompileFlags:
-  Add: [-Wall, -Werror, -Werror=vla, -xc-header, -Ustdin, -Ustdout, -Ustderr]
+  Add: [-xc-header]
+
+---
+
+CompileFlags:
+  Add: [-Wall, -Werror, -Werror=vla, -Ustdin, -Ustdout, -Ustderr, -ferror-limit=0]
 Completion:
   AllScopes: No
   ArgumentLists: None

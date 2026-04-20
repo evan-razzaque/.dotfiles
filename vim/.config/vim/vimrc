@@ -63,9 +63,6 @@ function! s:set_readonly()
 	endif
 endfunction
 
-" Variables
-let g:filetype_h = "c"
-
 " Airline
 let g:airline_powerline_fonts = 1
 let g:airline_left_sep = ""
@@ -117,6 +114,7 @@ augroup Autocommands
 
 	" Use :noa w[q] to write without stripping trailing whitespace
 	autocmd BufWrite * call s:strip_trailing_whitespace()
+	autocmd VimEnter *.c,*.h let g:filetype_h = "c"
 augroup END
 
 call s:source($MYVIMDIR . "functions.vim")
