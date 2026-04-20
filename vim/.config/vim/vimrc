@@ -28,6 +28,12 @@ Plug 'devsjc/vim-jb'
 Plug 'tpope/vim-commentary'
 Plug 'ryvnf/readline.vim'
 
+if (executable("deno"))
+	Plug 'vim-denops/denops.vim'
+	Plug 'kg8m/vim-detect-indent'
+	call s:source($MYVIMDIR . "vim-detect-indent-config.vim")
+endif
+
 if (executable("ag"))
 	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 	Plug 'junegunn/fzf.vim'
