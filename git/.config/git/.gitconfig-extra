@@ -1,0 +1,6 @@
+[init]
+	defaultBranch = main
+
+[alias]
+	amend-changes = commit -a --amend --no-edit
+
