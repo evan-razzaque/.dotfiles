@@ -2,3 +2,4 @@
 --adopt
 --no-folding
 --verbose
+--ignore ^(un)?install\.sh
