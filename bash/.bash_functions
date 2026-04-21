@@ -1,6 +1,9 @@
 #
 # ~/.bash_functions
 #
+# Non-constant source
+# shellcheck disable=SC1090
+#
 
 mkcd() {
 	if [[ $# -gt 1 ]]; then
@@ -28,14 +31,18 @@ wherefunc() (
 # Rename a function
 renamefunc() {
 	local current_name="$1"
-	local new_name="$(tr -dc '[:alnum:]_-' <<< "$2")"
+	local new_name=$2
 
-	if [[ "$2" != "$new_name" ]]; then
-		echo "$0: '$2' is not a valid function name"
+	# shellcheck disable=SC2155
+	# We don't need the return code since tr always returns 0 with proper syntax
+	local new_name_sanitized="$(tr -dc '[:alnum:]_-' <<< "$new_name")"
+
+	if [[ "$new_name" != "$new_name_sanitized" ]]; then
+		echo "$0: '$new_name' is not a valid function name"
 		return 1
 	fi
 
-	if ! command -v "$current_name"; then
+	if ! command -v "$current_name" &>/dev/null; then
 		"$current_name"
 		return 2
 	fi
@@ -75,23 +82,39 @@ _tmux_export_unset() {
 	fi
 
 	export() {
-		# Don't export empty variables
-		[[ -z "${!1}" ]] && return
+		builtin export "${@?}" || return
+		local tmux_cmd="tmux"
 
-		# shellcheck disable=SC2163
-		builtin export "${1?}"
-		if [[ -n "$TMUX" ]]; then
-			tmux setenv "$1" "${!1}"
-		fi
+		[[ -z "$TMUX" ]] && tmux_cmd=:
+
+		for arg in "$@"; do
+			[[ "$arg" =~ "-" ]]	&& continue
+
+			value=${arg#*=}
+			name=${arg%"=$value"}
+
+			if [[ "$value" == "$arg" ]]; then
+				value=${!name}
+			fi
+
+			$tmux_cmd setenv "$name" "$value"
+		done
 	}
 
 	# shellcheck disable=SC2329
+	# This function is called, but isn't detected because shellcheck thinks
+	# unset (and a few other builtins) is always a builtin
 	unset() {
-		builtin unset "$@"
-		if [[ -n "$TMUX" ]]; then
-			local args="$*"
-			tmux setenv -u "${args//@(-f|-v|-n)/}"
-		fi
+		builtin unset "${@?}" || return
+		local tmux_cmd="tmux"
+
+		[[ -z "$TMUX" ]] && tmux_cmd=:
+
+		for arg in "$@"; do
+			[[ "$arg" =~ "-" ]]	&& continue
+
+			$tmux_cmd setenv -u "$arg"
+		done
 	}
 }
 
@@ -104,7 +127,7 @@ if [[ -n "$VIRTUAL_ENV" ]]; then
 
 		tmux set -u @venv-deactivate
 
-		builtin unset -f export unset _deactivate deactivate
+		unset -f export unset _deactivate deactivate
 	}
 fi
 
@@ -114,16 +137,16 @@ source-venv() {
 
 	_tmux_export_unset
 
+	# shellcheck disable=SC1091
 	if source "$venv/bin/activate"; then
 		renamefunc deactivate _deactivate
 		tmux set @venv-deactivate "$(declare -f _deactivate)"
 		source "${BASH_SOURCE[0]}"
-
 
 		export _OLD_VIRTUAL_PATH
 		export _OLD_VIRTUAL_PYTHONHOME
 		export _OLD_VIRTUAL_PS1
 	fi
 
-	builtin unset -f export unset _deactivate
+	unset -f export unset _deactivate
 }
