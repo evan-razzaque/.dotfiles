@@ -33,9 +33,7 @@ renamefunc() {
 	local current_name="$1"
 	local new_name=$2
 
-	# shellcheck disable=SC2155
-	# We don't need the return code since tr always returns 0 with proper syntax
-	local new_name_sanitized="$(tr -dc '[:alnum:]_-' <<< "$new_name")"
+	local new_name_sanitized="${new_name//[^[:alnum:]-_]/}"
 
 	if [[ "$new_name" != "$new_name_sanitized" ]]; then
 		echo "$0: '$new_name' is not a valid function name"
