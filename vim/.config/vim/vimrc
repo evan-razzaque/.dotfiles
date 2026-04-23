@@ -77,6 +77,8 @@ set nomodeline
 set number
 set relativenumber
 
+" Change viminfo filename
+set viminfo='100,<50,s10,h,n~/.config/vim/.viminfo
 filetype plugin indent on
 
 " Indentation
