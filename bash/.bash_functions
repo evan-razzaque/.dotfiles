@@ -1,9 +1,9 @@
+#!/usr/bin/env bash
 #
 # ~/.bash_functions
 #
-# Non-constant source
-# shellcheck disable=SC1090
-#
+# Source (the command) warnings
+# shellcheck disable=SC1090,SC1091
 
 mkcd() {
 	if [[ $# -gt 1 ]]; then
@@ -82,7 +82,6 @@ _tmux_export_unset() {
 	export() {
 		builtin export "${@?}" || return
 		local tmux_cmd="tmux"
-
 		[[ -z "$TMUX" ]] && tmux_cmd=:
 
 		for arg in "$@"; do
@@ -90,9 +89,11 @@ _tmux_export_unset() {
 
 			value=${arg#*=}
 			name=${arg%"=$value"}
+			[[ "$value" == "$arg" ]] && value=${!name}
 
-			if [[ "$value" == "$arg" ]]; then
-				value=${!name}
+			if [[ -z "$value" ]]; then
+				builtin unset "$name"
+				continue
 			fi
 
 			$tmux_cmd setenv "$name" "$value"
@@ -100,12 +101,9 @@ _tmux_export_unset() {
 	}
 
 	# shellcheck disable=SC2329
-	# This function is called, but isn't detected because shellcheck thinks
-	# unset (and a few other builtins) is always a builtin
 	unset() {
 		builtin unset "${@?}" || return
 		local tmux_cmd="tmux"
-
 		[[ -z "$TMUX" ]] && tmux_cmd=:
 
 		for arg in "$@"; do
@@ -118,12 +116,15 @@ _tmux_export_unset() {
 
 if [[ -n "$VIRTUAL_ENV" ]]; then
 	deactivate() {
+		local tmux_cmd="tmux"
+		[[ -z "$TMUX" ]] && tmux_cmd=:
+
 		_tmux_export_unset
 
-		eval "$(tmux show -v @venv-deactivate)"
+		eval "$($tmux_cmd show -v @venv-deactivate)"
 		_deactivate
 
-		tmux set -u @venv-deactivate
+		$tmux_cmd set -u @venv-deactivate
 
 		unset -f export unset _deactivate deactivate
 	}
@@ -132,13 +133,14 @@ fi
 # Activate python venv for a tmux session
 source-venv() {
 	local venv="${1:-.}"
+	local tmux_cmd="tmux"
+	[[ -z "$TMUX" ]] && tmux_cmd=:
 
 	_tmux_export_unset
 
-	# shellcheck disable=SC1091
 	if source "$venv/bin/activate"; then
 		renamefunc deactivate _deactivate
-		tmux set @venv-deactivate "$(declare -f _deactivate)"
+		$tmux_cmd set @venv-deactivate "$(declare -f _deactivate)"
 		source "${BASH_SOURCE[0]}"
 
 		export _OLD_VIRTUAL_PATH
@@ -146,5 +148,7 @@ source-venv() {
 		export _OLD_VIRTUAL_PS1
 	fi
 
-	unset -f export unset _deactivate
+	# Preserve _deactivate while outside of tmux
+	[[ -n "$TMUX" ]] && unset -f _deactivate
+	unset -f export unset
 }
