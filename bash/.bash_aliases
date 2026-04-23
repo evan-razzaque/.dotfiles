@@ -17,3 +17,6 @@ alias open='xdg-open'
 alias compiledb='compiledb --command-style'
 
 alias tmux-new='tmux new -s "#{server_sessions}"'
+
+alias info='info --vi-keys'
+alias wget='wget --hsts-file ~/.local/share/wget/wget-hsts'
