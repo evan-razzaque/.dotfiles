@@ -22,6 +22,7 @@ append-paths PATH ~/.config/composer/vendor/bin
 export MAKEFLAGS="--jobs=$(nproc) --output-sync"
 export EDITOR=vim
 export TIME_STYLE=long-iso
+export INPUTRC=~/.config/readline/inputrc
 
 # User-defined environment variables
 if [ -f ~/.bash_env ]; then
