@@ -3,20 +3,27 @@
 #
 
 append-paths() {
-	local args=("$@")
 	local path_name="$1"
 
-	local paths="${args[@]:1}"
+	shift 1
+	local paths=("$@")
 
-	for p in $paths; do
-		if [[ ! "${!path_name}" =~ "$p" ]]; then
-			export $path_name="${!path_name}:$p"
+	for p in "${paths[@]}"; do
+		if [[ "${!path_name}" == *"$p"* ]]; then
+			continue
 		fi
+
+		# Prevent leading ':'
+		if [[ -n "${!path_name}" ]]; then
+			export "$path_name=${!path_name}:"
+		fi
+
+		export "$path_name=${!path_name}$p"
 	done
 }
 
 append-paths PATH ~/.bin ~/.local/bin
-append-paths PYTHONPATH $(find /usr/local/lib -name "site-packages" 2> /dev/null)
+append-paths PYTHONPATH "$(find /usr/local/lib -name "site-packages" 2> /dev/null)"
 append-paths PATH ~/.config/composer/vendor/bin
 
 export MAKEFLAGS="--jobs=$(nproc) --output-sync"
