@@ -38,8 +38,8 @@ if [ -f ~/.bash_env ]; then
 	set +o allexport
 fi
 
+[[ -f ~/.bash_profile_user ]] && . ~/.bash_profile_user
 unset -f append-paths
 
-[[ -f ~/.bash_profile_user ]] && . ~/.bash_profile_user
 [[ -f ~/.bashrc ]] && . ~/.bashrc
 
