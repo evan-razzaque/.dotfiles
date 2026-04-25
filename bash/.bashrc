@@ -12,6 +12,8 @@ if [[ ! "$PS1" =~ "$PS1_STRING" ]]; then
 	PS1="$PS1_STRING"
 fi
 
+INPUTRC=~/.config/readline/inputrc
+
 # Ubuntu being Ubuntu
 unset command_not_found_handle
 
