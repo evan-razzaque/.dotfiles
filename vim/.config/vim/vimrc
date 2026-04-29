@@ -54,8 +54,10 @@ noremap <C-a> <Nop>| " Fix tmux prefix key conflict
 noremap <leader>i <C-a>
 
 " Copy and paste from system clipboard
-vnoremap <C-y> "+y
-noremap <C-p> "+p
+if (has("clipboard"))
+	vnoremap <C-y> "+y
+	noremap <C-p> "+p
+endif
 
 noremap ; :
 noremap <silent> \rs :call <SID>strip_trailing_whitespace()<CR>
