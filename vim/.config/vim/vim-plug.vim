@@ -1,9 +1,3 @@
-function s:source(file)
-	if !empty(glob(a:file))
-		exec "source " . a:file
-	endif
-endfunction
-
 Plug 'arcticicestudio/nord-vim'
 Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 Plug 'vim-airline/vim-airline'
@@ -19,7 +13,7 @@ Plug 'ryvnf/readline.vim'
 if (executable("deno"))
 	Plug 'vim-denops/denops.vim'
 	Plug 'kg8m/vim-detect-indent'
-	call s:source($MYVIMDIR . "vim-detect-indent-config.vim")
+	silent! source $MYVIMDIR/vim-detect-indent-config.vim
 endif
 
 if (executable("ag"))
@@ -30,10 +24,10 @@ endif
 if (executable("node"))
 	Plug 'neoclide/coc.nvim', {'branch': 'release'}
 	Plug 'jwalton512/vim-blade'
-	call s:source($MYVIMDIR . "coc-config.vim")
+	silent! source $MYVIMDIR/coc-config.vim
 endif
 
 if (executable("tmux"))
 	Plug 'christoomey/vim-tmux-navigator'
-	call s:source($MYVIMDIR . "vim-tmux-config.vim")
+	silent! source $MYVIMDIR/vim-tmux-config.vim
 endif

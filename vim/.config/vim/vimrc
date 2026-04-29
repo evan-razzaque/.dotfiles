@@ -1,12 +1,6 @@
 unlet! skip_defaults_vim
 source $VIMRUNTIME/defaults.vim
 
-function s:source(file)
-	if !empty(glob(a:file))
-		exec "source " . a:file
-	endif
-endfunction
-
 let data_dir = has('nvim') ? stdpath('data') . '/site' : $MYVIMDIR
 if empty(glob(data_dir . '/autoload/plug.vim'))
 	silent execute '!mkdir -p ' .data_dir.'/autoload/'
@@ -16,8 +10,8 @@ endif
 
 call plug#begin()
 
-call s:source($MYVIMDIR . "vim-plug.vim")
-call s:source($MYVIMDIR . "vim-plug-user.vim")
+silent! source $MYVIMDIR/vim-plug.vim
+silent! source $MYVIMDIR/vim-plug-user.vim
 
 call plug#end()
 
@@ -85,4 +79,4 @@ augroup Autocommands
 	autocmd VimEnter *.c,*.h let g:filetype_h = "c"
 augroup END
 
-call s:source($MYVIMDIR . "functions.vim")
+silent! source $MYVIMDIR/functions.vim
