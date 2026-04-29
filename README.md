@@ -3,10 +3,13 @@
 
 Required packages:
 - stow
+- wget (for vim-plug)
 
 Optional packages:
 - nodejs (required by coc.nvim)
 - github-cli (required for git credential helper)
+- clang (for coc-clangd)
+- the_silver_searcher (for fzf in vim)
 
 1. Backup existing dotfiles for each package in this repository (.bashrc, .bash_profile, etc.)
 2. Run ```preview.sh``` to see which files will be created/overwritten
