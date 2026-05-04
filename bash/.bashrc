@@ -6,11 +6,16 @@
 [[ $- != *i* ]] && return
 
 PS1_STRING='[\u@\h \W]\$ '
+if [[ -e "$SSH_TTY" ]]; then
+	PS1_STRING="(ssh) $PS1_STRING"
+fi
 
 # Retain python venv prompt
 if [[ ! "$PS1" =~ "$PS1_STRING" ]]; then
 	PS1="$PS1_STRING"
 fi
+
+unset PS1_STRING
 
 INPUTRC=~/.config/readline/inputrc
 
