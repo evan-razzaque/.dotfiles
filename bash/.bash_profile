@@ -26,7 +26,7 @@ append-paths PATH ~/.bin ~/.local/bin
 append-paths PYTHONPATH "$(find /usr/local/lib -name "site-packages" 2> /dev/null)"
 append-paths PATH ~/.config/composer/vendor/bin
 
-export MAKEFLAGS="--jobs=$(nproc) --output-sync"
+export MAKEFLAGS="--jobs=$(nproc)"
 export EDITOR=vim
 export TIME_STYLE=long-iso
 
