@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 
-# Takes stow output from stdin, filters out packages that are restowed and
-# ignores package config adoption (since we use git restore).
+# Remove redundant output from stow. Input is passwd via stdin.
 filter-stow-output() {
 	grep --invert-match --perl-regexp '^MV' |\
 		cat --number | \
+
+		# Ignore all packages that are restowed
 		sed --regexp-extended 's/(.*)LINK(:\s\S+)(.*)(\(reverts.*)/\1UNLINK\2/g' | \
 		sort --stable --key=3,3 | \
 		uniq --unique --skip-fields=1 | \
+
 		sort --numeric-sort | \
 		cut --fields=2
 }
