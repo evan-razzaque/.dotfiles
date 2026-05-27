@@ -3,13 +3,13 @@
 # Takes stow output from stdin, filters out packages that are restowed and
 # ignores package config adoption (since we use git restore).
 filter-stow-output() {
-	grep -vP '^MV' |\
-		cat -n | \
-		sed -E 's/(.*)LINK(:\s\S+)(.*)(\(reverts.*)/\1UNLINK\2/g' | \
-		sort -sk 3,3 | \
-		uniq -uf 1 | \
-		sort -n | \
-		cut -f 2
+	grep --invert-match --perl-regexp '^MV' |\
+		cat --number | \
+		sed --regexp-extended 's/(.*)LINK(:\s\S+)(.*)(\(reverts.*)/\1UNLINK\2/g' | \
+		sort --stable --key=3,3 | \
+		uniq --unique --skip-fields=1 | \
+		sort --numeric-sort | \
+		cut --fields=2
 }
 
 _stow() {
@@ -27,7 +27,7 @@ stow-cmd() {
 	git restore --staged .
 	git ls-files --deleted | xargs git restore &>/dev/null
 
-	git clean -fd .ignore &>/dev/null
+	git clean --force .ignore &>/dev/null
 }
 
 stow-install() {
@@ -52,12 +52,12 @@ stow-uninstall() {
 
 stow-uninstall-preview() {
 	_stow --delete --simulate
-	git clean -nd .ignore | sed 's|Would remove .ignore/|Not removing |g'
+	git clean --dry-run .ignore | sed 's|Would remove .ignore/|Not removing |g'
 }
 
 stow-preview() {
 	_stow --restow --simulate
-	git clean -nd .ignore | sed 's|Would remove .ignore/|Ignoring |g'
+	git clean --dry-run .ignore | sed 's|Would remove .ignore/|Ignoring |g'
 }
 
 # Default action

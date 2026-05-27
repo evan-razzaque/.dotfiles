@@ -24,4 +24,4 @@ cd "$DOTFILES_PATH"
 
 git init
 git add .
-git commit -m "Initial commit"
+git commit --message "Initial commit"
