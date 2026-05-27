@@ -6,10 +6,10 @@ if [[ -z "$DOTFILES_PATH" ]]; then
 	exit 1
 fi
 
-DOTFILES_PATH=$(readlink -f "$DOTFILES_PATH")
+DOTFILES_PATH=$(realpath "$DOTFILES_PATH")
 cd $(dirname "$0")
 
-if [[ "$DOTFILES_PATH" == $(readlink -f "$PWD") ]]; then
+if [[ "$DOTFILES_PATH" == $(realpath "$PWD") ]]; then
 	echo "Cannot use existing dotfiles directory" >&2
 	exit 1
 fi
