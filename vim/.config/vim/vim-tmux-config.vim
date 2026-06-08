@@ -32,10 +32,10 @@ function! s:tmux_nav(mode, direction)
 	return ""
 endfunction
 
-cnoreabbrev <expr> shell getcmdtype() == ":" && getcmdline() == 'shell'
-			\? <SID>tmux_nav_unset_vim_pid() . 'shell' : 'shell'
-
 if !empty($TMUX)
+	cnoreabbrev <expr> shell getcmdtype() == ":" && getcmdline() == 'shell'
+				\? <SID>tmux_nav_unset_vim_pid() . 'shell' : 'shell'
+
 	augroup TmuxNavigateSetPid
 		autocmd!
 		autocmd VimEnter,VimResume,ShellCmdPost * silent! call s:tmux_nav_set_vim_pid()
