@@ -1,11 +1,45 @@
-not_vim_pager="tmux capture-pane -p | tail -n1 |\
-    grep -v '^-- More --'"
-is_vim="ps -p '#{@tmux-nav-vim}' &>/dev/null && ${not_vim_pager}"
+%hidden is_vim="ps -p '#{@tmux-nav-vim}' &>/dev/null"
 
-bind-key 'C-h' if-shell "$is_vim" 'send-keys C-a C-h' 'select-pane -L'
-bind-key 'C-j' if-shell "$is_vim" 'send-keys C-a C-j' 'select-pane -D'
-bind-key 'C-k' if-shell "$is_vim" 'send-keys C-a C-k' 'select-pane -U'
-bind-key 'C-l' if-shell "$is_vim" 'send-keys C-a C-l' 'select-pane -R'
+%hidden vim_nav_notify="\
+    ps -p #{@tmux-nav-vim} -o uid:1= | grep #{uid} || exit 0;\
+    (\
+        flock -e 3;\
+        echo #{@tmux-nav-vim-direction} >&3;\
+        kill -USR1 #{@tmux-nav-vim} &>/dev/null;\
+    ) 3> /tmp/tmux-nav-vim-#{uid}-#{@tmux-nav-vim}\
+"
+
+%hidden __bind="C-h"
+bind-key -r $__bind if-shell "$is_vim" {
+    set -p @tmux-nav-vim-direction Left
+    run-shell "$vim_nav_notify"
+    send-keys C-a $__bind
+} { select-pane -L }
+
+%hidden __bind="C-l"
+bind-key -r $__bind if-shell "$is_vim" {
+    set -p @tmux-nav-vim-direction Right
+    run-shell "$vim_nav_notify"
+    send-keys C-a $__bind
+} { select-pane -R }
+
+%hidden __bind="C-j"
+bind-key -r $__bind if-shell "$is_vim" {
+    set -p @tmux-nav-vim-direction Down
+    run-shell "$vim_nav_notify"
+    send-keys C-a $__bind
+} { select-pane -D }
+
+%hidden __bind="C-k"
+bind-key -r $__bind if-shell "$is_vim" {
+    set -p @tmux-nav-vim-direction Up
+    run-shell "$vim_nav_notify"
+    send-keys C-a $__bind
+} { select-pane -U }
+
+set-environment -hgu __bind
+set-environment -hgu is_vim
+set-environment -hgu vim_nav_notify
 
 bind-key -T copy-mode-vi 'C-h' select-pane -L
 bind-key -T copy-mode-vi 'C-j' select-pane -D
