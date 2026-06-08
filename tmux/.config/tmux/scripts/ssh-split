@@ -127,18 +127,15 @@ SSH_CMD="$(tmux-get-pane-cmd)"
 
 case $SPLIT_CMD in
 	split-pane | split-window | new-window)
-		if [[ -z "$SSH_CMD" ]]; then
-			exec tmux $SPLIT_CMD -c "#{pane_current_path}" $DIRECTION
-			exit
-		fi
+		[[ -z "$SSH_CMD" ]] && exit 1
 
 		log-msg "ssh_cmd: $SSH_CMD, split_cmd: $SPLIT_CMD, direction: $DIRECTION"
 
 		tmux-ssh-split "$SPLIT_CMD" "$DIRECTION" "$SSH_CMD"
 		;;
 	respawn)
+		[[ -z "$SSH_CMD" ]] && exit 1;
 		tmux respawn-pane -k
-		[[ -z "$SSH_CMD" ]] && exit 0;
 
 		INDENTIFIER=$(ps -o command= -g $(tmux-get-pane-pid) | grep -Po '\w+(?=:)' | head -n1)
 		set-pane-pids "-" "-" "$(tmux-get-pane-id)" "$INDENTIFIER"
