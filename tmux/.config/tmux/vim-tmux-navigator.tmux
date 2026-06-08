@@ -1,6 +1,6 @@
-not_vim_pager="tmux capture-pane -p | tail -n1 |\
+%hidden not_vim_pager="tmux capture-pane -p | tail -n1 |\
     grep -v '^-- More --'"
-is_vim="ps -p '#{@tmux-nav-vim}' &>/dev/null && ${not_vim_pager}"
+%hidden is_vim="ps -p '#{@tmux-nav-vim}' &>/dev/null && ${not_vim_pager}"
 
 bind-key 'C-h' if-shell "$is_vim" 'send-keys C-a C-h' 'select-pane -L'
 bind-key 'C-j' if-shell "$is_vim" 'send-keys C-a C-j' 'select-pane -D'
