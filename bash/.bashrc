@@ -42,7 +42,7 @@ then
 	fi
 fi
 
-unset FASTFETCH
+unset FASTFETCH TMUX_PANE_COUNT TMUX_WINDOW_COUNT
 
 source() {
 	local file="$1"
