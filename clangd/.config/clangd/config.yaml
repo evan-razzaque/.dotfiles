@@ -1,5 +1,6 @@
 CompileFlags:
   Add: [-Wall, -Werror, -Werror=vla, -Ustdin, -Ustdout, -Ustderr, -ferror-limit=0, -xc-header]
+  Remove: [-m*, -f*]
 Completion:
   AllScopes: No
   ArgumentLists: None
