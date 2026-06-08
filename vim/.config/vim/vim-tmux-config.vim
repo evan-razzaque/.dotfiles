@@ -1,6 +1,5 @@
 function! s:tmux_get_pane_id()
-	return substitute(
-				\system("tmux display-message -p '#{pane_id}'"), '\n', '', '')
+	return trim(system("tmux display-message -p '#{pane_id}'"))
 endfunction
 
 function! s:tmux_nav_set_vim_pid()
