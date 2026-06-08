@@ -72,3 +72,9 @@ vnoremap <silent> <expr> <C-a><C-j> <SID>tmux_nav("v", "Down")
 vnoremap <silent> <expr> <C-a><C-k> <SID>tmux_nav("v", "Up")
 vnoremap <silent> <expr> <C-a><C-l> <SID>tmux_nav("v", "Right")
 " vnoremap <silent> <expr> <C-a><C-\> <SID>tmux_nav("v", "Previous")
+
+" Terminal
+tnoremap <expr> <silent> <C-a><C-h> "\<C-w>:\<C-U> TmuxNavigateLeft\<cr>"
+tnoremap <expr> <silent> <C-a><C-j> "\<C-w>:\<C-U> TmuxNavigateDown\<cr>"
+tnoremap <expr> <silent> <C-a><C-k> "\<C-w>:\<C-U> TmuxNavigateUp\<cr>"
+tnoremap <expr> <silent> <C-a><C-l> "\<C-w>:\<C-U> TmuxNavigateRight\<cr>"
