@@ -1,22 +1,40 @@
+function! s:tmux_cmd(args)
+	return system("tmux " . a:args)
+endfunction
+
+function! s:get_tmux_prefix()
+	let l:key = trim(s:tmux_cmd("display -p '#{prefix}'"))
+
+	if l:key == "None"
+		return ""
+	endif
+
+	if match(l:key, '\v(C-|\^|M-|S-)') != -1
+		return "<" . l:key . ">"
+	endif
+
+	return l:key
+endfunction
+
 function! s:tmux_get_pane_id()
-	return trim(system("tmux display-message -p '#{pane_id}'"))
+	return trim(s:tmux_cmd("display-message -p '#{pane_id}'"))
 endfunction
 
 function! s:tmux_nav_set_vim_pid()
 	let s:tmux_pane_id = $TMUX_PANE
-	call system("tmux set -t " . s:tmux_pane_id . " -p @tmux-nav-vim " . getpid())
+	call s:tmux_cmd("set -t " . s:tmux_pane_id . " -p @tmux-nav-vim " . getpid())
 
 	return ""
 endfunction
 
 function! s:tmux_nav_unset_vim_pid()
-	call system("tmux set -t " . s:tmux_pane_id . " -up @tmux-nav-vim")
+	call s:tmux_cmd("set -t " . s:tmux_pane_id . " -up @tmux-nav-vim")
 
 	return ""
 endfunction
 
-" Navigate to tmux pane in insert/command/visual mode
-function! s:tmux_nav(mode, direction)
+" Wrapper function for :TmuxNavigate<direction>
+function! s:tmux_nav(direction, mode = "")
 	silent! execute(":TmuxNavigate" . a:direction)
 
 	if empty($TMUX)
@@ -31,7 +49,11 @@ function! s:tmux_nav(mode, direction)
 	return ""
 endfunction
 
+let s:tmux_prefix = ""
+
 if !empty($TMUX)
+	let s:tmux_prefix = s:get_tmux_prefix()
+
 	cnoreabbrev <expr> shell getcmdtype() == ":" && getcmdline() == 'shell'
 				\? <SID>tmux_nav_unset_vim_pid() . 'shell' : 'shell'
 
@@ -44,32 +66,26 @@ endif
 
 let g:tmux_navigator_no_mappings = 1
 
-" Insert mode (vim to tmux and vim to vim)
-inoremap <silent> <C-a><C-h> <esc>:call <SID>tmux_nav("i", "Left")<cr>
-inoremap <silent> <C-a><C-j> <esc>:call <SID>tmux_nav("i", "Down")<cr>
-inoremap <silent> <C-a><C-k> <esc>:call <SID>tmux_nav("i", "Up")<cr>
-inoremap <silent> <C-a><C-l> <esc>:call <SID>tmux_nav("i", "Right")<cr>
+let s:nav_binds = [
+			\[s:tmux_prefix . "<C-h>", "Left"],
+			\[s:tmux_prefix . "<C-j>", "Down"],
+			\[s:tmux_prefix . "<C-k>", "Up"],
+			\[s:tmux_prefix . "<C-l>", "Right"]
+\]
 
-" Normal mode (vim to tmux and vim to vim)
-nnoremap <silent> <C-a><C-h> :<C-U>TmuxNavigateLeft<cr>
-nnoremap <silent> <C-a><C-j> :<C-U>TmuxNavigateDown<cr>
-nnoremap <silent> <C-a><C-k> :<C-U>TmuxNavigateUp<cr>
-nnoremap <silent> <C-a><C-l> :<C-U>TmuxNavigateRight<cr>
+for [s:key, s:direction] in s:nav_binds
+	execute "inoremap <silent> ".s:key.
+				\" <esc>:call <SID>tmux_nav('".s:direction."', 'i')<cr>"
 
-" Command mode (vim to tmux)
-cnoremap <silent> <expr> <C-a><C-h> <SID>tmux_nav("c", "Left")
-cnoremap <silent> <expr> <C-a><C-j> <SID>tmux_nav("c", "Down")
-cnoremap <silent> <expr> <C-a><C-k> <SID>tmux_nav("c", "Up")
-cnoremap <silent> <expr> <C-a><C-l> <SID>tmux_nav("c", "Right")
+	execute "nnoremap <silent> ".s:key.
+				\" :<C-U>TmuxNavigate".s:direction."<cr>"
 
-" Visual mode (vim to tmux)
-vnoremap <silent> <expr> <C-a><C-h> <SID>tmux_nav("v", "Left")
-vnoremap <silent> <expr> <C-a><C-j> <SID>tmux_nav("v", "Down")
-vnoremap <silent> <expr> <C-a><C-k> <SID>tmux_nav("v", "Up")
-vnoremap <silent> <expr> <C-a><C-l> <SID>tmux_nav("v", "Right")
+	execute "cnoremap <silent> <expr> ".s:key.
+				\" <SID>tmux_nav('".s:direction."')"
 
-" Terminal
-tnoremap <expr> <silent> <C-a><C-h> "\<C-w>:\<C-U> TmuxNavigateLeft\<cr>"
-tnoremap <expr> <silent> <C-a><C-j> "\<C-w>:\<C-U> TmuxNavigateDown\<cr>"
-tnoremap <expr> <silent> <C-a><C-k> "\<C-w>:\<C-U> TmuxNavigateUp\<cr>"
-tnoremap <expr> <silent> <C-a><C-l> "\<C-w>:\<C-U> TmuxNavigateRight\<cr>"
+	execute "vnoremap <silent> <expr> ".s:key.
+				\" <SID>tmux_nav('".s:direction."')"
+
+	execute "tnoremap <silent> <expr> ".s:key.
+				\" '\<C-w>:\<C-U>TmuxNavigate".s:direction."\<cr>'"
+endfor
