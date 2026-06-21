@@ -9,3 +9,5 @@ command! -nargs=1 -complete=command Redir silent call Redir(<f-args>)
 
 " Close buffer without closing window
 command Bw :bp | sp | bn | bd
+
+command -nargs=0 Ft :filetype detect | silent! CocRestart
