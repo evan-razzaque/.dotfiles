@@ -31,9 +31,9 @@ if command -v fastfetch > /dev/null && \
 	[ "$FASTFETCH" != 0 ] && \
 	[ "$FASTFETCH_DISABLE" != 0 ]
 then
-	if command -v tmux > /dev/null; then
-		read TMUX_WINDOW_COUNT < <(tmux list-windows 2> /dev/null | wc -l)
-		read TMUX_PANE_COUNT < <(tmux list-panes 2> /dev/null | wc -l)
+	if [[ -n "$TMUX" ]] && command -v tmux > /dev/null; then
+		TMUX_WINDOW_COUNT=$(tmux list-windows 2> /dev/null | wc -l)
+		TMUX_PANE_COUNT=$(tmux list-panes 2> /dev/null | wc -l)
 	fi
 
 	if [[ -z "$TERMINAL_EMULATOR" ]] && [[ -z "$TERM_PROGRAM" \
