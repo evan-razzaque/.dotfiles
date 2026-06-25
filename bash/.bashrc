@@ -44,19 +44,13 @@ fi
 
 unset FASTFETCH TMUX_PANE_COUNT TMUX_WINDOW_COUNT
 
-source() {
-	local file="$1"
-
-	[[ -f "$file" ]] && builtin source "$file"
-}
-
 # Aliases
 source ~/.bash_aliases
 
 # Shell functions
 source ~/.bash_functions
 
-# User-defined config
-source ~/.bashrc_user
-
-unset -f source
+# shellcheck disable=SC1090
+for file in ~/.config/bash/bashrc.d/*.sh; do
+	[[ -r "$file" ]] && source "$file"
+done
