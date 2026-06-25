@@ -44,11 +44,8 @@ fi
 
 unset FASTFETCH TMUX_PANE_COUNT TMUX_WINDOW_COUNT
 
-# Aliases
-source ~/.bash_aliases
-
-# Shell functions
-source ~/.bash_functions
+source ~/.config/bash/bash_aliases
+source ~/.config/bash/bash_functions
 
 # shellcheck disable=SC1090
 for file in ~/.config/bash/bashrc.d/*.sh; do
