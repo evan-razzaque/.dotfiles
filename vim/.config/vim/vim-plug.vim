@@ -1,5 +1,5 @@
 Plug 'arcticicestudio/nord-vim'
-Plug 'catppuccin/vim', { 'as': 'catppuccin' }
+Plug 'evan-razzaque/catppuccin-vim', { 'as': 'catppuccin' }
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'HerringtonDarkholme/yats.vim'
