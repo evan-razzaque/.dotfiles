@@ -2,7 +2,7 @@
 
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
-alias ip='ip --color'
+alias ip='ip --color=auto'
 
 alias la='ls -A'
 alias lr='ls -R'
