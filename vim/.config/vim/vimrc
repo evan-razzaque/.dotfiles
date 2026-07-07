@@ -66,6 +66,7 @@ noremap <silent> \rs :call <SID>strip_trailing_whitespace()<CR>
 function! s:strip_trailing_whitespace()
 	let v = winsaveview()
 	silent! execute(':%s/\v\s+$//g')
+	silent! call histdel('/', -1)
 	call winrestview(l:v)
 endfunction
 
