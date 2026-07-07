@@ -20,7 +20,10 @@ __systemd_osc_context_escape() {
 wherefunc() (
 	local func_name="$1"
 	shopt -s extdebug
-	declare -F "$func_name"
+	declare -F "$func_name" || {
+		echo "${FUNCNAME[0]}: '$func_name' not found"
+		return 1
+	}
 )
 
 # Rename a function
