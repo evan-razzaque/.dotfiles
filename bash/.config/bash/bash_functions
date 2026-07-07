@@ -60,7 +60,7 @@ time-notify() {
 	tmp="$(mktemp)" || return $?
 	notify_time="${NOTIFY_TIME:-1500}"
 
-	/usr/bin/time -f %E -o "$tmp" "$@"
+	/usr/bin/time -f %E -o "$tmp" -- "$@"
 	local exit_code=$?
 
 	local args="$*"
