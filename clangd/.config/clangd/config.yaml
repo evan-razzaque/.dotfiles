@@ -11,4 +11,4 @@ InlayHints:
 Hover:
   ShowAKA: true
 Diagnostics:
-  UnusedIncludes: None
+  UnusedIncludes: IWYU
