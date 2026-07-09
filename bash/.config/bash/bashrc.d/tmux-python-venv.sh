@@ -3,6 +3,8 @@
 # Source (the command) warnings
 # shellcheck disable=SC1090,SC1091
 
+[[ -z "$TMUX" ]] && return
+
 # Prevent a function from being invoked outside of a function
 _tmux_guard_func() {
 	if [[ -z "${FUNCNAME[1]}" || -z "${FUNCNAME[2]}" ]]; then
@@ -25,7 +27,6 @@ _tmux_export_unset() {
 	export() {
 		builtin export "${@?}" || return
 		local tmux_cmd="tmux"
-		[[ -z "$TMUX" ]] && tmux_cmd=:
 
 		for arg in "$@"; do
 			[[ "$arg" =~ "-" ]]	&& continue
@@ -47,7 +48,6 @@ _tmux_export_unset() {
 	unset() {
 		builtin unset "${@?}" || return
 		local tmux_cmd="tmux"
-		[[ -z "$TMUX" ]] && tmux_cmd=:
 
 		for arg in "$@"; do
 			[[ "$arg" =~ "-" ]]	&& continue
@@ -60,7 +60,6 @@ _tmux_export_unset() {
 if [[ -n "$VIRTUAL_ENV" ]] && [[ -n "$_TMUX_SOURCE_VENV" ]]; then
 	deactivate() {
 		local tmux_cmd="tmux"
-		[[ -z "$TMUX" ]] && tmux_cmd=:
 
 		_tmux_export_unset
 
@@ -78,11 +77,6 @@ fi
 source-venv() {
 	local venv="${1:-.}"
 	local tmux_cmd="tmux"
-
-	if [[ -z "$TMUX" ]]; then
-		echo "${FUNCNAME[0]}: Must be in tmux session" >&2
-		return 1
-	fi
 
 	_tmux_export_unset
 
