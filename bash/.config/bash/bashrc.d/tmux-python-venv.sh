@@ -5,7 +5,10 @@
 
 [[ -z "$TMUX" ]] && return
 
-# Prevent a function from being invoked outside of a function
+# Prevent a function from being invoked outside of a function.
+# To use this function, simply insert the following at the top
+# of a function:
+# _tmux_guard_func || return
 _tmux_guard_func() {
 	if [[ -z "${FUNCNAME[1]}" || -z "${FUNCNAME[2]}" ]]; then
 		echo "Cannot be called outside of a function" >&2
@@ -13,20 +16,65 @@ _tmux_guard_func() {
 	fi
 }
 
-_tmux_bash_func_export_name() {
-	_tmux_guard_func || return
-
-	local name=${1?}
-	echo "BASH_FUNC_$name%%"
+# Run a tmux command
+_tmux() {
+	tmux "$@"
 }
 
-# Export and unset environment variables for tmux
+# Get the name of an exported shell function.
+#
+# @param $1 The function name
+# var[out] REPLY The exported function name
+_tmux_bash_func_export_name() {
+	local name=${1?}
+	REPLY="BASH_FUNC_$name%%"
+}
+
+# Export shell function(s) to tmux session environment.
+#
+# @param $@ The function(s) to export
+_tmux_export_func() {
+	_tmux_guard_func || return
+
+	local func export_func
+
+	for func in "$@"; do
+		builtin export -f "${func?}" || continue
+
+		_tmux_bash_func_export_name "$func"
+		export_func=$REPLY
+
+		_tmux setenv "$export_func" "$(printenv "$export_func")"
+	done
+
+}
+
+# Unset shell function(s) from tmux session environment.
+#
+# @param $@ The function(s) to unset
+_tmux_unset_func() {
+	_tmux_guard_func || return
+
+	local func export_func
+
+	for func in "$@"; do
+		declare -pf "${func?}" &>/dev/null || continue
+		builtin unset -f "${func}"
+
+		_tmux_bash_func_export_name "$func"
+		export_func=$REPLY
+
+		_tmux setenv -u "$export_func"
+	done
+}
+
+# Define functions to update tmux environment variables along
+# with the shell environment.
 _tmux_export_unset() {
 	_tmux_guard_func || return
 
 	export() {
 		builtin export "${@?}" || return
-		local tmux_cmd="tmux"
 
 		for arg in "$@"; do
 			[[ "$arg" =~ "-" ]]	&& continue
@@ -40,59 +88,59 @@ _tmux_export_unset() {
 				continue
 			fi
 
-			$tmux_cmd setenv "$name" "$value"
+			_tmux setenv "$name" "$value"
 		done
 	}
 
 	# shellcheck disable=SC2329
 	unset() {
 		builtin unset "${@?}" || return
-		local tmux_cmd="tmux"
 
 		for arg in "$@"; do
 			[[ "$arg" =~ "-" ]]	&& continue
 
-			$tmux_cmd setenv -u "$arg"
+			_tmux setenv -u "$arg"
 		done
 	}
 }
 
-if [[ -n "$VIRTUAL_ENV" ]] && [[ -n "$_TMUX_SOURCE_VENV" ]]; then
-	deactivate() {
-		local tmux_cmd="tmux"
-
-		_tmux_export_unset
-
-		# eval "$($tmux_cmd show -v @venv-deactivate)"
-		_deactivate
-
-		$tmux_cmd setenv -u "$(_tmux_bash_func_export_name _deactivate)"
-
-		unset _TMUX_SOURCE_VENV
-		unset -f export unset _deactivate deactivate
-	}
-fi
-
-# Activate python venv for a tmux session
+# Activate python venv (virtual environment) for the active tmux session.
+# This will define two functions. The first function is deactivate, which will
+# deactivate the python venv for the current shell and tmux session (other
+# existing panes will not be affected). And the second function is _deactivate,
+# which will only deactivate the venv for the current shell.
+#
+# @param $1 The python venv activation script (<venv>/bin/activate), or the
+# venv directory itself.
 source-venv() {
-	local venv="${1:-.}"
-	local tmux_cmd="tmux"
+	local venv_script="${1:-.}"
+	local rc
 
+	[[ -d "$venv_script" ]] && venv_script="$venv_script/bin/activate"
 	_tmux_export_unset
 
-	if source "$venv/bin/activate"; then
-		renamefunc deactivate _deactivate
-		$tmux_cmd setenv "$(_tmux_bash_func_export_name _deactivate)" "() {  \
-			$(declare -f _deactivate | tail -n +3)"
+	source "$venv_script"
+	rc=$?
 
-		_TMUX_SOURCE_VENV=1
-		source "${BASH_SOURCE[0]}"
+	if [[ $rc -eq 0 ]]; then
+		renamefunc deactivate _deactivate
+
+		# shellcheck disable=SC2329
+		deactivate() {
+			_tmux_export_unset
+			_deactivate
+
+			_tmux_unset_func _deactivate deactivate
+			unset -f export unset
+		}
+
+		_tmux_export_func _deactivate deactivate
 
 		export _OLD_VIRTUAL_PATH
 		export _OLD_VIRTUAL_PYTHONHOME
 		export _OLD_VIRTUAL_PS1
-		export _TMUX_SOURCE_VENV
 	fi
 
 	unset -f export unset
+	return $rc
 }
