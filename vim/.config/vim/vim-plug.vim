@@ -9,6 +9,7 @@ Plug 'vim-scripts/DoxygenToolkit.vim'
 Plug 'devsjc/vim-jb'
 Plug 'tpope/vim-commentary'
 Plug 'ryvnf/readline.vim'
+Plug 'HiPhish/info.vim'
 
 if (executable("deno"))
 	Plug 'vim-denops/denops.vim'
