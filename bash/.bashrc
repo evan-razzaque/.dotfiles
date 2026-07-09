@@ -1,6 +1,8 @@
 #
 # ~/.bashrc
 #
+# shellcheck disable=SC1091,SC1090
+#
 
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
@@ -44,10 +46,13 @@ fi
 
 unset FASTFETCH TMUX_PANE_COUNT TMUX_WINDOW_COUNT
 
-source ~/.config/bash/bash_aliases
-source ~/.config/bash/bash_functions
+BASH_CONFIG=~/.config/bash
 
-# shellcheck disable=SC1090
-for file in ~/.config/bash/bashrc.d/*.sh; do
+source "$BASH_CONFIG/aliases"
+source "$BASH_CONFIG/functions"
+
+for file in "$BASH_CONFIG"/bashrc.d/*.sh; do
 	[[ -r "$file" ]] && source "$file"
 done
+
+unset BASH_CONFIG
