@@ -7,7 +7,7 @@ if [[ -z "$DOTFILES_PATH" ]]; then
 fi
 
 DOTFILES_PATH=$(realpath "$DOTFILES_PATH")
-cd $(dirname "$0")
+cd "$(dirname "$0")" || exit
 
 if [[ "$DOTFILES_PATH" == $(realpath "$PWD") ]]; then
 	echo "Cannot use existing dotfiles directory" >&2
@@ -20,7 +20,12 @@ mkdir "$DOTFILES_PATH/.ignore"
 cp -- .stowrc *.sh README.md .gitignore "$DOTFILES_PATH"
 cp .ignore/README.txt .ignore/.stow-local-ignore "$DOTFILES_PATH/.ignore"
 
-cd "$DOTFILES_PATH"
+cd "$DOTFILES_PATH" || exit
+
+ln -s stow-cmd.sh install
+ln -s stow-cmd.sh preview
+ln -s stow-cmd.sh uninstall
+ln -s stow-cmd.sh uninstall-preview
 
 git init
 git add .
