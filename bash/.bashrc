@@ -51,7 +51,7 @@ BASH_CONFIG=~/.config/bash
 source "$BASH_CONFIG/aliases"
 source "$BASH_CONFIG/functions"
 
-for file in "$BASH_CONFIG"/bashrc.d/*.sh; do
+for file in "$BASH_CONFIG"/rc.d/*.sh; do
 	[[ -r "$file" ]] && source "$file"
 done
 
