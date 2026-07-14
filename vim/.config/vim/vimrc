@@ -42,7 +42,7 @@ filetype plugin indent on
 " Change history file locations
 let $VIM_STATE = '~/.local/state/vim'
 let &viminfo = "'100,<50,s10,h,n".$VIM_STATE."/.viminfo"
-let g:netrw_home = $VIM_STATE.'/netrwhist'
+let g:netrw_home = $VIM_STATE
 unlet $VIM_STATE
 
 " Indentation
