@@ -55,4 +55,4 @@ for file in "$BASH_CONFIG"/rc.d/*.sh; do
 	[[ -r "$file" ]] && source "$file"
 done
 
-unset BASH_CONFIG
+unset BASH_CONFIG file
