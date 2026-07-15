@@ -8,7 +8,7 @@ append-paths() {
 	local path_name="$1"
 
 	shift 1
-	local paths=("$@")
+	local p paths=("$@")
 
 	for p in "${paths[@]}"; do
 		if [[ "${!path_name}" == *"$p"* ]]; then
