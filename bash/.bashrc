@@ -46,13 +46,21 @@ fi
 
 unset FASTFETCH TMUX_PANE_COUNT TMUX_WINDOW_COUNT
 
-BASH_CONFIG=~/.config/bash
+source-config-files() {
+	# shellcheck disable=SC2155
+	local bash_config="$HOME/.config/bash"
+	local -a rc_files
 
-source "$BASH_CONFIG/aliases"
-source "$BASH_CONFIG/functions"
+	rc_files=("$bash_config/rc.d/"*.sh)
+	rc_files+=("$bash_config/rc.d/"*.bash)
 
-for file in "$BASH_CONFIG"/rc.d/*.sh; do
-	[[ -r "$file" ]] && source "$file"
-done
+	source "$bash_config/aliases"
+	source "$bash_config/functions"
 
-unset BASH_CONFIG file
+	local file
+	for file in "${rc_files[@]}"; do
+		[[ -r "$file" ]] && source "$file"
+	done
+} && source-config-files
+
+unset -f source-config-files
