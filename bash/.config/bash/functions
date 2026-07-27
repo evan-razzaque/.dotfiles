@@ -30,23 +30,29 @@ wherefunc() (
 renamefunc() {
 	local current_name="$1"
 	local new_name=$2
+	local func_def new_name_sanitized
 
-	local new_name_sanitized="${new_name//[^[:alnum:]-_]/}"
-
-	if [[ "$new_name" != "$new_name_sanitized" ]]; then
-		echo "$0: '$new_name' is not a valid function name" >&2
+	if (($# != 2)); then
+		echo "usage: ${FUNCNAME[0]} function-name new-name" >&2
 		return 1
 	fi
 
-	if ! command -v "$current_name" &>/dev/null; then
-		"$current_name"
-		return 2
+	func_def=$(declare -f "$current_name")
+
+	if [[ ! ${func_def-} ]]; then
+		echo "${FUNCNAME[0]}: function '$current_name' not found" >&2
+		return 1
 	fi
 
-	[[ -z "$new_name" ]] && return 1
+	new_name_sanitized="${new_name//[^[:alnum:]-_]/}"
 
-	eval "$new_name() $(declare -f "$current_name" | tail -n +2)"
+	if [[ "$new_name" != "$new_name_sanitized" ]]; then
+		echo "${FUNCNAME[0]}: '$new_name' is not a valid function name" >&2
+		return 1
+	fi
+
 	unset -f "$current_name"
+	eval "${func_def/$current_name/$new_name}"
 }
 
 # Time a commnad with a desktop notification instead of outputting to stderr
