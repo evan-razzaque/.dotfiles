@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 mkcd() {
-	if [[ $# -gt 1 ]]; then
+	if (($# > 1)); then
 		echo "${FUNCNAME[0]}: too many arguments" >&2
 		return 1
 	fi
@@ -20,15 +20,16 @@ __systemd_osc_context_escape() {
 wherefunc() (
 	local func_name="$1"
 	shopt -s extdebug
-	declare -F "$func_name" || {
-		echo "${FUNCNAME[0]}: '$func_name' not found" >&2
+
+	if ! declare -F "$func_name"; then
+		echo "${FUNCNAME[0]}: function '$func_name' not found" >&2
 		return 1
-	}
+	fi
 )
 
 # Rename a function
 renamefunc() {
-	local current_name="$1"
+	local func_name="$1"
 	local new_name=$2
 	local func_def new_name_sanitized
 
@@ -37,10 +38,10 @@ renamefunc() {
 		return 1
 	fi
 
-	func_def=$(declare -f "$current_name")
+	func_def=$(declare -f "$func_name")
 
 	if [[ ! ${func_def-} ]]; then
-		echo "${FUNCNAME[0]}: function '$current_name' not found" >&2
+		echo "${FUNCNAME[0]}: function '$func_name' not found" >&2
 		return 1
 	fi
 
@@ -51,26 +52,53 @@ renamefunc() {
 		return 1
 	fi
 
-	unset -f "$current_name"
+	unset -f "$func_name"
 	eval "${func_def/$current_name/$new_name}"
 }
 
 # Time a commnad with a desktop notification instead of outputting to stderr
 time-notify() {
+	local notify_time=1500
+	local tmp notify_time
+	local usage="usage: ${FUNCNAME[0]} [-t notify-time-ms] command [args...]"
+
 	if [[ ! -f /usr/bin/time ]]; then
 		/usr/bin/time
 		return $?
 	fi
 
-	local tmp notify_time
+	local OPTIND=1 OPTERR OPTARG opt
+	while getopts "t:h" opt; do
+		case "$opt" in
+			t)
+				notify_time=$OPTARG
+				if ! ((notify_time > 0)); then
+					echo "${FUNCNAME[0]}: invalid notify time '$OPTARG'" >&2
+					return 1
+				fi
+				;;
+			h)
+				echo "$usage"
+				return
+				;;
+			*)
+				return 1
+		esac
+	done
+
+	shift "$((OPTIND - 1))"
+
+	if (($# == 0)); then
+		echo "$usage" >&2
+		return 1
+	fi
+
 	tmp="$(mktemp)" || return $?
-	notify_time="${NOTIFY_TIME:-1500}"
 
 	/usr/bin/time -f %E -o "$tmp" -- "$@"
 	local exit_code=$?
 
-	local args="$*"
-	notify-send -t "$notify_time" -a "${FUNCNAME[0]}" "$args" "Finished in $(tail -n1 "$tmp")"
+	notify-send -t "$notify_time" -a "${FUNCNAME[0]}" "$*" "Finished in $(tail -n1 "$tmp")"
 	rm "$tmp"
 
 	return $exit_code
