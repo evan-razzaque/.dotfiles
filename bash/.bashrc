@@ -19,6 +19,8 @@ fi
 
 unset PS1_STRING
 
+# Readline
+HISTIGNORE+="&:?:??:poweroff:shutdown:reboot"
 INPUTRC=~/.config/readline/inputrc
 
 # Ubuntu being Ubuntu
