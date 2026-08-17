@@ -20,7 +20,7 @@ fi
 unset PS1_STRING
 
 # Readline
-HISTIGNORE+="&:?:??:poweroff:shutdown:reboot"
+HISTIGNORE+="&:?:??:poweroff:shutdown:reboot:systemctl suspend:systemctl soft-reboot"
 INPUTRC=~/.config/readline/inputrc
 
 # Ubuntu being Ubuntu
