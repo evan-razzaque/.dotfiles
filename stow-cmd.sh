@@ -2,7 +2,7 @@
 
 cd "$(dirname "$0")" || exit
 
-# Remove redundant output from stow. Input is passwd via stdin.
+# Remove redundant output from stow. Input is passed via stdin.
 filter-stow-output() {
 	grep --invert-match --perl-regexp '^MV' |\
 		cat --number | \
