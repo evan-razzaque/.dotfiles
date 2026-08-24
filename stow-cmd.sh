@@ -30,8 +30,6 @@ stow-cmd() {
 
 	git restore --staged .
 	git ls-files --deleted | xargs git restore &>/dev/null
-
-	git clean --force .ignore &>/dev/null
 }
 
 stow-install() {
@@ -56,12 +54,10 @@ stow-uninstall() {
 
 stow-uninstall-preview() {
 	_stow --delete --simulate
-	git clean --dry-run .ignore | sed 's|Would remove .ignore/|Not removing |g'
 }
 
 stow-preview() {
 	_stow --restow --simulate
-	git clean --dry-run .ignore | sed 's|Would remove .ignore/|Ignoring |g'
 }
 
 # Default action
