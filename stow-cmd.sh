@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+cd "$(dirname "$0")" || exit
+
 # Remove redundant output from stow. Input is passwd via stdin.
 filter-stow-output() {
 	grep --invert-match --perl-regexp '^MV' |\
@@ -67,14 +69,24 @@ eval "$(basename "$(realpath "$0")")() { stow-install \$@; }"
 
 # shellcheck disable=2155,2164
 main() {
+	local stow_ignore=".stow-global-ignore"
 	local action=$(basename "$0")
+	local has_stow_ignore=false
 
-	cd "$(dirname "$0")"
+	if [[ -e "$HOME/$stow_ignore" ]]; then
+		has_stow_ignore=true
+	fi
+
+	# For some reason, .stow-global-ignore HAS to be in $HOME,
+	# so we temporarily create a symlink in $HOME (because $HOME clutter bad)
+	! "$has_stow_ignore" && ln -s --relative "$stow_ignore" "$HOME"
 
 	PACKAGES=(*/)
 	PACKAGES=("${@:-${PACKAGES[@]}}")
 
 	"stow-$action" "$@"
+
+	! "$has_stow_ignore" && rm "$HOME/$stow_ignore"
 }
 
 main "$@"
