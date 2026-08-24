@@ -1,3 +1,12 @@
+# Usage
+If no packages are specified, all packages are included.
+```bash
+./preview [PACKAGES...]
+./install [PACKAGES...]
+./uninstall-preview [PACKAGES...]
+./uninstall [PACKAGES...]
+```
+
 # Installation
 **Warning:** Make sure to look through each package/file and add the ones
 you don't want to ./.stow-global-ignore (or ~/.stow-global-ignore) before installation.
@@ -14,12 +23,12 @@ Optional packages:
 - the_silver_searcher (for fzf in vim)
 
 1. Backup existing dotfiles for each package in this repository (.bashrc, .bash_profile, etc.)
-2. Run ```preview``` to see which files will be created/overwritten
-3. Run ```install``` to create the symlinks for each package
+2. Run ```preview``` to see which files will be symlinked
+3. Run ```install``` to create the symlinks
 
 # Uninstallation
 Similar to installation, any package/file you don't want to unlink can be
 added to .stow-global-ignore.
 
 1. Run ```uninstall-preview``` to see which symlinks will be removed
-2. Run ```uninstall``` to remove the symlinks for each package
+2. Run ```uninstall``` to remove the symlinks
