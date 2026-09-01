@@ -70,7 +70,7 @@ main() {
 
 	# For some reason, .stow-global-ignore HAS to be in $HOME,
 	# so we temporarily create a symlink in $HOME (because $HOME clutter bad)
-	if [[ ! -e "$HOME/$stow_ignore" ]]; then
+	if [[ ! -e "$HOME/$stow_ignore" ]] && [[ -f "$stow_ignore" ]]; then
 		ln -s --relative "$stow_ignore" "$HOME"
 		trap 'rm "$HOME/$stow_ignore"' RETURN
 	fi
