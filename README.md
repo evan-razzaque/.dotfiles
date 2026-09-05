@@ -27,8 +27,5 @@ Optional packages:
 3. Run ```install``` to create the symlinks
 
 # Uninstallation
-Similar to installation, any package/file you don't want to unlink can be
-added to .stow-global-ignore.
-
 1. Run ```uninstall-preview``` to see which symlinks will be removed
 2. Run ```uninstall``` to remove the symlinks

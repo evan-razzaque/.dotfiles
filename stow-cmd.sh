@@ -2,6 +2,41 @@
 
 cd "$(dirname "$0")" || exit
 
+# trap-n command signal [activation_count]
+# Run COMMAND after receiving SIGNAL_SPEC ACTIVATION_COUNT times.
+# If ACTIVATION_COUNT is not provided, it will default to 1.
+trap-n() {
+	local cmd=${1?}
+	local -u signal=${2?}
+	local -i n=${3:-1}
+
+	if (((n * 1) < 1)); then
+		echo "$0: Invalid activation count" >&2
+		return 1
+	fi
+
+	# Don't activate for this function
+	if [[ "$signal" == "RETURN" ]]; then
+		((n++))
+	fi
+
+	# shellcheck disable=SC2064
+	trap "$cmd" "$signal" || return
+
+	for ((i = 1; i < n; i++)) {
+		trap -- "$(trap -p "$signal")" "$signal"
+	}
+}
+
+setup-stow-ignore() {
+	# For some reason, .stow-global-ignore HAS to be in $HOME,
+	# so we temporarily create a symlink in $HOME (because $HOME clutter bad)
+	if [[ ! -e "$HOME/$stow_ignore" ]] && [[ -f "$stow_ignore" ]]; then
+		ln -s --relative "$stow_ignore" ~/
+		trap-n "rm ~/$stow_ignore; trap - RETURN" RETURN 2
+	fi
+}
+
 # Remove redundant output from stow. Input is passed via stdin.
 filter-stow-output() {
 	grep --invert-match --perl-regexp '^MV' |\
@@ -33,6 +68,7 @@ stow-cmd() {
 }
 
 stow-install() {
+	setup-stow-ignore || return
 	stow-cmd --restow
 
 	for package in "${PACKAGES[@]}"; do
@@ -57,6 +93,7 @@ stow-uninstall-preview() {
 }
 
 stow-preview() {
+	setup-stow-ignore || return
 	_stow --restow --simulate
 }
 
@@ -67,13 +104,6 @@ eval "$(basename "$(realpath "$0")")() { stow-install \$@; }"
 main() {
 	local stow_ignore=".stow-global-ignore"
 	local action=$(basename "$0")
-
-	# For some reason, .stow-global-ignore HAS to be in $HOME,
-	# so we temporarily create a symlink in $HOME (because $HOME clutter bad)
-	if [[ ! -e "$HOME/$stow_ignore" ]] && [[ -f "$stow_ignore" ]]; then
-		ln -s --relative "$stow_ignore" "$HOME"
-		trap 'rm "$HOME/$stow_ignore"' RETURN
-	fi
 
 	PACKAGES=(*/)
 	PACKAGES=("${@:-${PACKAGES[@]}}")
