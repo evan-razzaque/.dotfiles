@@ -28,7 +28,8 @@ if (executable("node"))
 	silent! source $MYVIMDIR/coc-config.vim
 endif
 
-if (executable("tmux"))
+silent! call system("tmux show-env -hg is_vim")
+if (executable("tmux") && v:shell_error == 0)
 	Plug 'christoomey/vim-tmux-navigator'
 	silent! source $MYVIMDIR/vim-tmux-config.vim
 endif
