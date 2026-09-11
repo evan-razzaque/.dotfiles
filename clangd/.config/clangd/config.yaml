@@ -1,5 +1,5 @@
 CompileFlags:
-  Add: [-Wall, -Werror, -Werror=vla, -ferror-limit=0, -xc-header]
+  Add: [-Wall, -Werror, -Werror=vla, -ferror-limit=0]
   Remove: [-m*, -f*]
 Completion:
   AllScopes: No
