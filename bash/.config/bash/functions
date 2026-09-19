@@ -53,7 +53,7 @@ renamefunc() {
 	fi
 
 	unset -f "$func_name"
-	eval "${func_def/$current_name/$new_name}"
+	eval "${func_def/$func_name/$new_name}"
 }
 
 # Time a commnad with a desktop notification instead of outputting to stderr
