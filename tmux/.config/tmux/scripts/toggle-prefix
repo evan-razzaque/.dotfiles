@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+toggle_prefix_key=${1?}
+
+tmux bind -T root "$toggle_prefix_key" '
+	set -gF @temp "#{prefix}";\
+	set -gF prefix "#{@prefix}";\
+	set -gF @prefix "#{@temp}";\
+\
+	set -gF @temp "#{status}";\
+	set -gF status "#{@status}";\
+	set -gF @status "#{@temp}";\
+\
+	set -gu @temp'
