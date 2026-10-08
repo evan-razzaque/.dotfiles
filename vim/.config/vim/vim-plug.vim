@@ -10,6 +10,7 @@ Plug 'devsjc/vim-jb'
 Plug 'tpope/vim-commentary'
 Plug 'ryvnf/readline.vim'
 Plug 'HiPhish/info.vim'
+Plug 'tpope/vim-eunuch'
 
 if (executable("deno"))
 	Plug 'vim-denops/denops.vim'
