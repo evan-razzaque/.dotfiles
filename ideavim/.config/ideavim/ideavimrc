@@ -37,3 +37,4 @@ noremap <C-p> "+p
 map <leader>rn <Action>(RenameElement)
 map <leader>e <Action>(ShowErrorDescription)
 map <leader>b <Action>(ToggleLineBreakpoint)
+map gr <Action>(FindUsages)
