@@ -5,17 +5,6 @@
 		"comment"
 	],
 	"semanticTokens.enable": true,
-	"pairs.enableCharacters": [
-		"(",
-		"[",
-		"{",
-		"\"",
-		"`"
-	],
-	"pairs.disableLanguages": [
-		"sh"
-	],
-	"pairs.requireEOLCharacters": ["(", "<", "\"", "`", "["],
 	"java.completion.guessMethodArguments": "off",
 	"javascript.autoClosingTags": false,
 	"javascript.suggest.completeFunctionCalls": false,
