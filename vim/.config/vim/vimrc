@@ -80,6 +80,7 @@ augroup Autocommands
 	autocmd BufNewFile,BufRead *.tsx setlocal filetype=typescriptreact
 	autocmd BufNewFile,BufRead *.jsx setlocal filetype=javascriptreact
 	autocmd BufNewFile,BufRead *.tmux setlocal filetype=tmux
+	autocmd BufNewFile,BufRead coc-settings.json setlocal filetype=jsonc
 	autocmd	BufWinEnter * call s:set_readonly()
 
 	" Use :noa w[q] to write without stripping trailing whitespace
