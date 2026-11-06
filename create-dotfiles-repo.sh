@@ -18,7 +18,6 @@ mkdir "$DOTFILES_PATH" || exit $?
 mkdir "$DOTFILES_PATH/.ignore"
 
 cp -- .stowrc *.sh README.md .gitignore "$DOTFILES_PATH"
-cp .ignore/README.txt .ignore/.stow-local-ignore "$DOTFILES_PATH/.ignore"
 
 cd "$DOTFILES_PATH" || exit
 
