@@ -4,29 +4,46 @@
 # shellcheck disable=SC1091,SC1090
 #
 
-append-paths() {
+# Append paths to $1
+# @param $1 The name of the path variable to append to
+# @param $@ The paths to append
+append_paths() {
 	local path_name="$1"
+	local -a paths
+	local p
 
 	shift 1
-	local p paths=("$@")
+	paths=("$@")
 
 	for p in "${paths[@]}"; do
-		if [[ "${!path_name}" == *"$p"* ]]; then
-			continue
-		fi
+		[[ "${!path_name}" == *"$p"* ]] && continue
 
-		# Prevent leading ':'
-		if [[ -n "${!path_name}" ]]; then
-			export "$path_name=${!path_name}:"
-		fi
-
-		export "$path_name=${!path_name}$p"
+		export "$path_name=${!path_name:+${!path_name}:}$p"
 	done
 }
 
-append-paths PATH ~/.bin ~/.local/bin
-append-paths PYTHONPATH "$(find /usr/local/lib -name "site-packages" 2> /dev/null)"
-append-paths PATH ~/.config/composer/vendor/bin
+# Prepend paths to $1
+# @param $1 The name of the path variable to prepend to
+# @param $@ The paths to prepend
+prepend_paths() {
+	local path_name="$1"
+	local -a paths
+	local p
+
+	shift 1
+	paths=("$@")
+
+	for p in "${paths[@]}"; do
+		[[ "${!path_name}" == *"$p"* ]] && continue
+
+		export "$path_name=$p${!path_name:+:${!path_name}}"
+	done
+
+}
+
+append_paths PATH ~/.bin ~/.local/bin
+append_paths PYTHONPATH "$(find /usr/local/lib -name "site-packages" 2> /dev/null)"
+append_paths PATH ~/.config/composer/vendor/bin
 
 export MAKEFLAGS="--jobs=$(nproc)"
 export EDITOR=vim
